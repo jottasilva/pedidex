@@ -1,0 +1,108 @@
+<template>
+    <article class="card">
+        <section class="title">
+            <span>{{ title }}</span>
+        </section>
+        
+        <section class="price">
+            <div class="price-footer">
+                <span>R$</span>
+                <h2>{{ formatCurrency(price) }}</h2>
+            </div>
+            <section class="bt">
+                <b>+</b>
+            </section>
+        </section>
+    </article>
+</template>
+<script>
+
+export default {
+    data() {
+        return {
+            title: "Lorem ipsum dolor sit amet consectetur, adipisicing elit .Lorem ipsum dolor sit amet consectetur, adipisicing elit .",
+            price: 32.00,
+            bg: ""
+        }
+
+    },
+    methods: {
+        formatCurrency(value) {
+            return new Intl.NumberFormat('pt-BR', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+            }).format(value)
+        }
+    }
+}
+</script>
+<style lang="scss" scoped>
+.card {
+    display: flex;
+    flex-direction: column;
+    width: 12vw;
+    background: url('../public/imgs/pizza1.png') no-repeat #edeef3;
+    background-size: cover;
+    background-position: 10px -130px;
+    height: 34vh;
+    justify-content: flex-end;
+    align-items: baseline;
+    border-radius: 4px;
+    font-family: "Noto Sans", serif;
+}
+
+.price {
+    display: flex;
+    width: 100%;
+    padding: 10px 20px;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.title {
+    padding: 0 20px;
+    display:flex;
+    flex-direction: column;
+    justify-content: space-between;
+    -webkit-line-clamp: 3;
+    color:#444;
+    padding-top: 20px;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.4em;
+}
+
+.price-footer {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    color: var(--bgDark);
+    justify-content: space-between;
+    align-items: center;
+}
+
+.price-footer span {
+    font-weight: bold;
+}
+
+.bt {
+    display: flex;
+    align-items: center;
+    color: white;
+    width: 28px;
+    cursor: pointer;
+    height: 28px;
+    padding: 8px;
+    font-weight: bold;
+    font-family: 'Montserrat';
+    background: var(--bgGreen);
+    border-radius: 4px;
+}
+@media (max-width: 507px){
+    .card{
+       
+    }
+}
+</style>
