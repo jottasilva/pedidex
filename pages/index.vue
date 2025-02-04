@@ -22,7 +22,7 @@
                 </div>
             </nav>
             <div id="container">
-                <div id="logo"></div>
+                <div id="logo"/>
                 <div id="search">
                     <section class="search"></section>
                     <form action="">
@@ -473,7 +473,7 @@ header {
         font-size: 26px;
     }
     #logo {
-        background-size: 80%;
+        background-size: 60%;
         align-self: center;
         margin-top: 0;
     }

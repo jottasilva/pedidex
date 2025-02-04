@@ -142,9 +142,14 @@
 .links{
     align-items: center;
     text-align: center;
+    margin-bottom: 40px;
 }
 .links h1{
     padding:0 0 20px 0;
+}
+.links ul li{
+    height: 30px;
+
 }
 }
 </style>
