@@ -36,17 +36,16 @@
             <section class="promo-slide">
                 <h1>PROMOÇOES</h1>
             </section>
-            <div ref="container" class="keen-slider">
-                <Promo_card class="keen-slider__slide number-slide" />
-                <Promo_card class="keen-slider__slide number-slide" />
-                <Promo_card class="keen-slider__slide number-slide" />
-                <Promo_card class="keen-slider__slide number-slide" />
-                <Promo_card class="keen-slider__slide number-slide" />
-                <Promo_card class="keen-slider__slide number-slide" />
-                <Promo_card class="keen-slider__slide number-slide" />
-                <Promo_card class="keen-slider__slide number-slide" />
-            </div>
-          
+           <div id="slideBox">
+            <Carousel v-bind="config">
+            <Slide v-for="image in images" :key="image.id">
+            <PromoCard />
+            </Slide>
+            <template #addons>
+            <Pagination />
+            </template>
+            </Carousel>
+           </div>
         </article>
 
         <article id="menu-itens">
@@ -67,11 +66,9 @@
 </template>
 
 <script setup>
-
-import { useKeenSlider } from 'keen-slider/vue.es'
-import 'keen-slider/keen-slider.min.css'
 import { useModalStore } from '~/stores/modal'
 import { useToast } from 'primevue/usetoast'
+import { Carousel, Slide, Pagination} from 'vue3-carousel';
 
 
 const toast = useToast()
@@ -84,36 +81,74 @@ const showToast = () => {
         life: 4000,
         group: 'bl'
     })
-    onMounted(() => {
-        if (slider.value) {
-            currentSlide.value = slider.value.track.details.rel
-        }
-    })
+ 
 }
 const modalStore = useModalStore();
 const { openModal } = modalStore;
-const [container] = useKeenSlider({
-    breakpoints: {
-        '(min-width: 576px)': {
-            slides: { perView:1, spacing: 5 },
-        },
-        '(min-width: 788px)': {
-            slides: { perView:2, spacing: 10 },
-        },
-        '(min-width: 980px)': {
-            slides: { perView:3, spacing: 10 },
-        },
-        '(min-width: 1024px)': {
-            slides: { perView:4, spacing: 10 },
-        },
-       
-        
+
+
+const images = Array.from({ length: 10 }, (_, index) => ({
+  id: index + 1,
+  url: `https://picsum.photos/800/600?random=${index + 1}`,
+}));
+
+const config = {
+  height:400,
+  itemsToShow: 1,
+  gap: 5,
+  snapAlign: 'center',
+  breakpointMode: 'carousel',
+  breakpoints: {
+
+    400: {
+      itemsToShow: 1,
+      snapAlign: 'start',
     },
-    slides: { perView: 1 },
-})
+    500: {
+      itemsToShow: 2,
+      snapAlign: 'start',
+    },
+    768: {
+      itemsToShow:3,
+      snapAlign: 'start',
+    },
+    1024: {
+      itemsToShow:4,
+      snapAlign: 'start',
+    },
+  },
+};
 </script>
 
 <style lang="scss">
+#slideBox{
+    width: 64vw;
+    margin-bottom:100px;
+}
+.carousel__pagination {
+  position: relative;
+  bottom: -60px; 
+  display: flex;
+  justify-content: center;
+  
+}
+.carousel__pagination-button {
+  width: 12px;
+  height: 12px;
+  background-color: #ccc;
+  border-radius: 50%;
+  transition: background-color 0.3s ease;
+}
+.carousel__pagination-button--active {
+  background-color: var(--bgGreen); 
+  transform: scale(1.3);
+}
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: 0;
+}
+
 .p-toast {
     top: 85vh !important;
     right: 40px !important;
@@ -192,12 +227,13 @@ nav {
     backdrop-filter: blur(2.5px);
     -webkit-backdrop-filter: blur(13.5px);
 }
+
 header {
     display: flex;
     height: 60vh;
     flex-direction: column;
-    background: linear-gradient(rgba(0, 0, 0, .8), rgba(0, 0, 0, 0.5)), 
-                url('../public/imgs/bg.jpg') no-repeat;
+    background: linear-gradient(rgba(0, 0, 0, .8), rgba(0, 0, 0, 0.5)),
+        url('../public/imgs/bg.jpg') no-repeat;
     background-size: cover;
     background-position: top;
 }
@@ -332,6 +368,7 @@ header {
     display: flex;
     padding: 10px 20px;
     cursor: pointer;
+    align-items: center;
     background-color: var(--bgGreen);
     border-radius: 5px;
     font-family: "Noto Sans", serif;
@@ -379,49 +416,74 @@ header {
 .keen-slider {
     gap: 30px;
 }
-@media (max-width: 1200px){
-    nav{
+
+@media (max-width: 1200px) {
+    nav {
         flex: 1 1 30%;
     }
-    #navbar{
+
+    header {
+        height: 80vh;
+        padding-bottom: 30px;
+    }
+
+    #navbar {
         flex-direction: column;
-        height: 30vh;
-        padding-bottom:50px;
+        height: 40vh;
+        text-align: center;
+        align-items: center;
+        justify-content: center;
+
     }
-    .establishment{
+
+    .establishment {
         width: 80vw;
-        align-items:center;
-        padding: 20px 0;
+        gap: 12px;
+        align-items: center;
+        padding-top: 50px;
     }
-    .menu{
+
+    .menu {
         width: 80vw;
         flex-direction: column;
     }
-    .total{
-        
+
+    #middle {
+        width: 80vw;
+
+    }
+
+    .total {
+
         align-items: center;
     }
-    .total span{
-        line-height: 30px;
+
+    .total span {
+        line-height: 40px;
         font-size: 1.5rem;
     }
-    .total h3{
-        line-height: 30px;
+
+    .total h3 {
+        line-height: 40px;
         font-size: 3rem;
     }
-    #container{
+
+    #container {
         width: 80vw;
-        padding-bottom: 30px;
         box-shadow: none;
     }
-    #logo{
+
+    #logo {
         background-size: 80%;
         align-self: center;
         margin-top: 0;
     }
-    #search{
-        margin-top:10px;
-        box-shadow:none;
+    #slideBox{
+    width: 84vw;
+    }
+    #search {
+        margin-top: 10px;
+        box-shadow: none;
     }
 }
 </style>

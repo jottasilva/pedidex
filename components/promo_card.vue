@@ -40,11 +40,11 @@ export default {
 .card {
     display: flex;
     flex-direction: column;
-    width: 12vw;
+    width: 90%;
     background: url('../public/imgs/pizza1.png') no-repeat #edeef3;
     background-size: cover;
     background-position: 10px -130px;
-    height: 34vh;
+    height: 100%;
     justify-content: flex-end;
     align-items: baseline;
     border-radius: 4px;

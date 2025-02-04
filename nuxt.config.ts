@@ -1,12 +1,13 @@
 import Aura from '@primevue/themes/aura';
 
 export default defineNuxtConfig({
-  modules: [
-    '@primevue/nuxt-module'
-  ],
+  modules: ['@primevue/nuxt-module', 'vue3-carousel-nuxt'],
   css: [],
   build: {
     transpile: ['primevue']
+  },
+  carousel: {
+    prefix: 'sld'
   },
   primevue: {
     options: {
@@ -27,7 +28,10 @@ export default defineNuxtConfig({
       link: [
         { rel: 'stylesheet', href: 'https://cdn.jsdelivr.net/npm/primevue/resources/themes/nova-light/theme.css' },
         { rel: 'stylesheet', href: 'https://cdn.jsdelivr.net/npm/primevue/resources/primevue.min.css' },
-        { rel: 'stylesheet', href: 'https://cdn.jsdelivr.net/npm/primeicons/primeicons.css' }
+        { rel: 'stylesheet', href: 'https://cdn.jsdelivr.net/npm/primeicons/primeicons.css' },
+        {
+          rel: 'stylesheet',href: 'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css'
+        }
       ]
     }
   },
