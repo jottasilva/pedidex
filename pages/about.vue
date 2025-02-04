@@ -1,5 +1,7 @@
 <template>
-  <article  id="about">
+  <ScrollPanel style="width: 100%; height: 95%;  overflow-y: auto">
+  <div>
+    <article  id="about">
     <h1>Sobre Nós</h1>
 
     <p>Bem-vindo ao <strong>PEDIDEX Cardápio e comanda digital</strong>, a solução inovadora para otimizar a experiência de pedidos em
@@ -31,6 +33,8 @@
     <p class="mais"><strong>Quer saber mais?</strong>
       <br>Entre em contato conosco!</p>
   </article>
+  </div>
+</ScrollPanel>
 </template>
 
 <script>
@@ -59,6 +63,13 @@ export default {
 .mais{
   padding: 20px 0;
   font-size: 1.5rem;
+}
+@media (max-width: 768px) {
+    #about{
+     width: 80vw;
+     padding:20px;
+    }
+    
 }
 
 </style>

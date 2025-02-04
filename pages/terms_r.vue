@@ -1,6 +1,7 @@
 <template>
+    <ScrollPanel style="width: 96%; height: 95%">
     <div class="container">
-        <ScrollPanel style="width: 100%; height: 100%">
+        
         <h1>Termos de Responsabilidade</h1>
         <p>Ao utilizar o sistema de comanda digital do <strong>PEDIDEX Cardápio/comanda digital</strong>, você declara estar
             ciente e de acordo com os seguintes termos.</p>
@@ -28,9 +29,10 @@
 
         <h2>6. Aceitação</h2>
         <p>Ao continuar utilizando o sistema, o usuário concorda com estes termos.</p>
-    </ScrollPanel>
+  
         
     </div>
+    </ScrollPanel>
 </template>
 <style scoped>
 .container {
@@ -38,9 +40,20 @@
     color: #222;
     padding: 40px 80px;
 }
-
+.container h1{
+    padding: 20px 0;
+}
 .container h2 {
     color: var(--bgBlue);
     padding:12px 0;
+}
+@media (max-width: 768px){
+    .container{
+        padding:20px;
+    }
+    .container h1{
+        text-align: center;
+        padding-bottom: 30px;
+    }
 }
 </style>

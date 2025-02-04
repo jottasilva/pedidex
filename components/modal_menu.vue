@@ -23,13 +23,13 @@ const Terms = defineAsyncComponent(() => import('../pages/terms.vue'))
 const Terms_r = defineAsyncComponent(() => import('../pages/terms_r.vue')) 
 </script>
 <style scoped>
+
 #modal {
     display: flex;
     width: 80vw;
     max-width: 80vw;
     height: 80vh;
-    align-items: center;
-
+    justify-content: center;
     background: #fff;
     border-radius: 5px;
 }
@@ -51,7 +51,7 @@ const Terms_r = defineAsyncComponent(() => import('../pages/terms_r.vue'))
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    width: 100vw;
+    width: 101vw;
     height: 101vh;
     background: rgba(0, 0, 0, 0.9);
     position: fixed;

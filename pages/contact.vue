@@ -1,4 +1,5 @@
 <template>
+     <ScrollPanel style="width: 100%; height: 95%;  overflow-y: auto">
    <div class="container">
     <h1>Envie-nos uma Mensagem.</h1>
     <form>
@@ -18,7 +19,7 @@
         </section>
     </form>
    </div>
-    
+    </ScrollPanel>
 </template>
 <script>
 import { ref } from 'vue';
@@ -70,8 +71,24 @@ const value2 = ref('');
     }
     .container h1{
         font-family: "Noto sans";
-        color: #444;
+        color: var(--bgGreen);
         padding:20px 0 60px 0;
         font-size:2em;
+    }
+    @media (max-width: 768px){
+       .input-box{
+            flex-direction: column;
+            gap: 10px;
+        }
+        .container{
+        padding:20px;
+        flex: 1;
+    }
+    .container h1{
+        width: 100%;
+        padding-bottom:30px;
+        text-align: center;
+        font-size:1.3em;
+    }
     }
 </style>

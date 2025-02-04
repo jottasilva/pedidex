@@ -34,7 +34,7 @@
 
         <article id="middle">
             <section class="promo-slide">
-                <h1>PROMOÇOES</h1>
+                <h1>NOSSAS PROMOÇOES</h1>
             </section>
            <div id="slideBox">
             <Carousel v-bind="config">
@@ -56,9 +56,7 @@
 
         </article>
         <footer-component />
-        <modal-menu v-if="modalStore.modal">
-            <h1>HELO</h1>
-        </modal-menu>
+        <modal-menu v-if="modalStore.modal" />
         <Toast position="top-left" group="bl" />
 
     </div>
@@ -122,7 +120,7 @@ const config = {
 
 <style lang="scss">
 #slideBox{
-    width: 64vw;
+    width: 61vw;
     margin-bottom:100px;
 }
 .carousel__pagination {
@@ -223,8 +221,8 @@ body {
 nav {
     display: flex;
     justify-content: center;
-    background: rgba(0, 0, 0, 0.9);
-    backdrop-filter: blur(2.5px);
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(4px);
     -webkit-backdrop-filter: blur(13.5px);
 }
 
@@ -392,7 +390,7 @@ header {
 }
 
 .promo-slide h1 {
-    font-size: 2.5rem;
+    font-size: clamp(1em, 1em + 1vw, 2.5em);
     font-family: "Noto Sans", serif;
     color: var(--bgDark);
     text-align: left;
@@ -435,7 +433,6 @@ header {
         justify-content: center;
 
     }
-
     .establishment {
         width: 80vw;
         gap: 12px;
@@ -452,27 +449,29 @@ header {
         width: 80vw;
 
     }
-
     .total {
-
         align-items: center;
     }
-
     .total span {
         line-height: 40px;
         font-size: 1.5rem;
     }
-
     .total h3 {
         line-height: 40px;
         font-size: 3rem;
     }
-
     #container {
         width: 80vw;
         box-shadow: none;
     }
-
+    .promo-slide{
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+    }
+    .promo-slide h1{
+        font-size: 26px;
+    }
     #logo {
         background-size: 80%;
         align-self: center;
