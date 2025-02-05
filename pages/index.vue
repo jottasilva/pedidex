@@ -148,7 +148,7 @@ const config = {
 }
 
 .p-toast {
-    top: 85vh !important;
+    top: 88vh !important;
     right: 40px !important;
     padding: 2px;
 }
@@ -176,10 +176,15 @@ const config = {
 }
 
 .p-toast-message-success {
+    width: 20vw;
     background-color: #4caf50 !important;
     border-left: 5px solid #2e7d32 !important;
     color: #fff !important;
+    font-weight: bold;
 
+}
+.p-toast-detail {
+    color: #000 !important;
 }
 
 .p-toast-message-error {
@@ -325,7 +330,9 @@ header {
     font-size: .8rem;
     color: var(--bgGreen);
 }
-
+.establishment h2{
+    font-size: clamp(1em, 1em + 1vw, 1.5em);
+}
 .total {
     display: flex;
     flex-direction: column;
@@ -415,23 +422,32 @@ header {
     gap: 30px;
 }
 
-@media (max-width: 1200px) {
+@media (max-width: 1000px) {
     nav {
         flex: 1 1 30%;
     }
-
+    .p-toast-message-success {
+    width:40vw;
+    background-color: #4caf50 !important;
+    border-left: 5px solid #2e7d32 !important;
+    color: #fff !important;
+    font-weight: bold;
+    }
+    .p-toast {
+        top: 90vh !important;
+        right: 40px !important;
+        padding: 2px;
+    }
     header {
         height: 80vh;
         padding-bottom: 30px;
     }
-
     #navbar {
         flex-direction: column;
         height: 40vh;
         text-align: center;
         align-items: center;
         justify-content: center;
-
     }
     .establishment {
         width: 80vw;
@@ -485,4 +501,5 @@ header {
         box-shadow: none;
     }
 }
+
 </style>
