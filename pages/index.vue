@@ -4,8 +4,11 @@
             <nav>
                 <div id="navbar">
                     <section class="establishment">
-                        <h2>Restaurante Pizza da casa</h2>
-                        <span>Funcionamento Seg. a Sex. 18:40 - 23:50</span>
+                       
+                        <h2>
+                            {{ establishment.name }}
+                        </h2>
+                        <span>{{ establishment.operation }}</span>
                     </section>
                     <NuxtPage />
                     <section class="menu">
@@ -53,7 +56,6 @@
             <menu-item />
             <menu-item />
             <menu-item />
-
         </article>
         <footer-component />
         <modal-menu v-if="modalStore.modal" />
@@ -64,12 +66,41 @@
 </template>
 
 <script setup>
+
 import { useModalStore } from '~/stores/modal'
 import { useToast } from 'primevue/usetoast'
 import { Carousel, Slide, Pagination} from 'vue3-carousel';
-
+import { fetchEstablishments } from '~/services/getEstablishment';
+import { API_URL } from '~/services/apiService';
 
 const toast = useToast()
+const establishment= ref([]);
+const loading = ref(false);
+const error = ref(null);
+
+const loadEstablishment = async (id) => {
+    loading.value = true;
+    error.value = null;
+    try {
+        const data = await fetchEstablishments(id);
+        establishment.value = data;
+    } catch (err) {
+        error.value = 'Erro ao carregar Estabelecimento';
+        console.error(err);
+    } finally {
+        loading.value = false;
+    }
+};
+
+onMounted(() => {
+    loadEstablishment("ab02791e-e18d-4400-9dff-9ae997a67c18");
+});
+
+watch(establishment, (newEstablishment) => {
+    if (newEstablishment && newEstablishment.image) {
+        document.documentElement.style.setProperty('--bgImage', `url(${API_URL+"imgs/"+newEstablishment.image})`);
+    }
+}, { deep: true, immediate: true });
 
 const showToast = () => {
     toast.add({
@@ -83,8 +114,6 @@ const showToast = () => {
 }
 const modalStore = useModalStore();
 const { openModal } = modalStore;
-
-
 const images = Array.from({ length: 10 }, (_, index) => ({
   id: index + 1,
   url: `https://picsum.photos/800/600?random=${index + 1}`,
@@ -221,6 +250,7 @@ body {
     --bgGreen: #009c8d;
     --bgRed: #c61b19;
     --bgBlue: #133d67;
+    --bgImage:"";
 }
 
 nav {
@@ -236,7 +266,7 @@ header {
     height: 60vh;
     flex-direction: column;
     background: linear-gradient(rgba(0, 0, 0, .8), rgba(0, 0, 0, 0.5)),
-        url('../public/imgs/bg.jpg') no-repeat;
+        var(--bgImage) no-repeat;
     background-size: cover;
     background-position: top;
 }
@@ -261,7 +291,7 @@ header {
 
 #logo {
     display: flex;
-    margin-top: -50px;
+    margin-top: -20px;
     background: url('../public/imgs/logo.svg') no-repeat center;
     width: 285px;
     height: 190px;
@@ -323,15 +353,16 @@ header {
     color: white;
     font-weight: 500;
     letter-spacing: 1px;
-    line-height: 20px;
+    line-height: 23px;
 }
 
 .establishment span {
     font-size: .8rem;
     color: var(--bgGreen);
 }
-.establishment h2{
+.establishment h2 {
     font-size: clamp(1em, 1em + 1vw, 1.5em);
+
 }
 .total {
     display: flex;

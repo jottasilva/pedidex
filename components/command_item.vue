@@ -1,7 +1,7 @@
 <template>
     <div>
         <section class="grid">
-            <article v-for="(item, index) in produtos" :key="index" class="item">
+            <article v-for="(item, index) in produtos" :key="index" class="item" :class="{ 'riscado': item.quantidade === 0 }">
                 <section class="info">
                     <h3 class="title">{{ item.nome }}</h3>
                 </section>
@@ -14,16 +14,21 @@
             </article>
         </section>
         <section>
-<Toolbar class="footer">
-    <template #center>
-        <h3>Nº PEDIDO #0010</h3>
-    </template>
+            <Toolbar class="footer">
+                <template #center>
+                    <h3>Nº PEDIDO #0010</h3>
+                </template>
 
-    <template #start>
-        <h3>MESA 02</h3>
-    </template>
-    <template #end>  <h3>TOTAL R$ 76,40</h3></template>
-</Toolbar>
+                <template #start>
+                    <h3>MESA 02</h3>
+                </template>
+                <template #end>
+                    <div class="amount">
+                        <h3>TOTAL </h3>
+                        <h3>R$ 76,40</h3>
+                    </div>
+                </template>
+            </Toolbar>
         </section>
     </div>
 </template>
@@ -50,16 +55,22 @@ const alterarQuantidade = (index, valor) => {
     flex-direction: column;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
 }
-
+.riscado {
+    text-decoration: line-through;
+    opacity: 0.6;
+}
 .item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 0.1px solid #f1f1f1;
+    flex-direction: row;
+    border-bottom: 0.1px solid #dddddd;
     padding: 10px 0;
-
 }
-
+.amount{
+    display: flex;
+    flex-direction: row;
+}
 .info {
     display: flex;
     flex-direction: row;
@@ -70,7 +81,7 @@ const alterarQuantidade = (index, valor) => {
     color: #444;
     min-width: 120px;
     flex-wrap: nowrap;
-    padding-right:5px;
+    padding-right: 5px;
 }
 
 .btns {
@@ -99,19 +110,49 @@ const alterarQuantidade = (index, valor) => {
 .btn:nth-child(2) {
     background: rgb(172, 12, 12);
 }
-.footer{
+
+.footer {
     margin: 50px 0;
-    background:var(--bgGreen);
+    background: var(--bgGreen);
     border: none;
     color: white;
     font-size: clamp(1em, 1em + 1vw, 1em);
-    font-family:"Noto sans";
+    font-family: "Noto sans";
 }
+
 .btn:hover {
     background: #bdbcbc;
 }
 
 .quantity {
     font-weight: bold;
+}
+
+@media(max-width:1000px) {
+    .item {
+        flex-direction: column;
+    }
+
+    .info {
+        font-size: clamp(1em, 1em + 1vw, 2.5em);
+        width: 100%;
+        margin-bottom: 20px;
+        color: var(--bgGreen);
+    }
+
+    .price {
+        font-size: clamp(1em, 1em + 1vw, 2.5em);
+    }
+    .amount{
+        flex-direction: column;
+    }
+    .amount h3:first-of-type {
+        font-size:1em;
+    }
+
+    .amount h3:last-of-type {
+        flex-wrap: nowrap;
+        font-size: 2rem;
+    }
 }
 </style>

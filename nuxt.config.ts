@@ -1,6 +1,11 @@
 import Aura from '@primevue/themes/aura';
 
 export default defineNuxtConfig({
+  runtimeConfig:{
+    public:{
+      API_BASE_URL:process.env.API_BASE_URL
+    }
+  },
   modules: ['@primevue/nuxt-module', 'vue3-carousel-nuxt'],
   css: [],
   build: {

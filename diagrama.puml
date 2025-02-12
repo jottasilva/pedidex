@@ -1,0 +1,53 @@
+@startuml
+class User {
+  +id: UUID
+  +nome: String
+  +email: String
+}
+
+class Establishment {
+  +id: UUID
+  +nome: String
+  +tipo: String
+  +endereco: String
+  +proprietario: FK(User)
+}
+
+class Table {
+  +id: UUID
+  +numero: Int
+  +estabelecimento: FK(Establishment)
+}
+
+class Order {
+  +id: UUID
+  +mesa: FK(Table)
+  +status: String
+  +criada_em: DateTime
+  +atualizada_em: DateTime
+}
+
+class Product {
+  +id: UUID
+  +nome: String
+  +descricao: String
+  +preco: Decimal
+  +categoria: String
+  +estabelecimento: FK(Establishment)
+}
+
+class OrderItem {
+  +id: UUID
+  +comanda: FK(Order)
+  +produto: FK(Product)
+  +quantidade: Int
+  +subtotal: Decimal
+}
+
+User "1" -- "N" Establishment
+Establishment "1" -- "N" Table
+Table "1" -- "N" Order
+Order "1" -- "N" OrderItem
+Product "1" -- "N" OrderItem
+Establishment "1" -- "N" Product
+@enduml

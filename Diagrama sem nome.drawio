@@ -1,0 +1,13 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36" version="26.0.11">
+  <diagram name="Página-1" id="SJs6Nzlf7BftGe41irKx">
+    <mxGraphModel dx="1434" dy="791" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="FNqEjlRYUgbSU-N66Zwq-1" value="@startuml&#xa;class User {&#xa;  +id: UUID&#xa;  +nome: String&#xa;  +email: String&#xa;}&#xa;&#xa;class Establishment {&#xa;  +id: UUID&#xa;  +nome: String&#xa;  +tipo: String&#xa;  +endereco: String&#xa;  +proprietario: FK(User)&#xa;}&#xa;&#xa;class Table {&#xa;  +id: UUID&#xa;  +numero: Int&#xa;  +estabelecimento: FK(Establishment)&#xa;}&#xa;&#xa;class Order {&#xa;  +id: UUID&#xa;  +mesa: FK(Table)&#xa;  +status: String&#xa;  +criada_em: DateTime&#xa;  +atualizada_em: DateTime&#xa;}&#xa;&#xa;class Product {&#xa;  +id: UUID&#xa;  +nome: String&#xa;  +descricao: String&#xa;  +preco: Decimal&#xa;  +categoria: String&#xa;  +estabelecimento: FK(Establishment)&#xa;}&#xa;&#xa;class OrderItem {&#xa;  +id: UUID&#xa;  +comanda: FK(Order)&#xa;  +produto: FK(Product)&#xa;  +quantidade: Int&#xa;  +subtotal: Decimal&#xa;}&#xa;&#xa;User &quot;1&quot; -- &quot;N&quot; Establishment&#xa;Establishment &quot;1&quot; -- &quot;N&quot; Table&#xa;Table &quot;1&quot; -- &quot;N&quot; Order&#xa;Order &quot;1&quot; -- &quot;N&quot; OrderItem&#xa;Product &quot;1&quot; -- &quot;N&quot; OrderItem&#xa;Establishment &quot;1&quot; -- &quot;N&quot; Product&#xa;@enduml" style="text;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry width="740" height="790" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
