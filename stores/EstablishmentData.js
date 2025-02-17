@@ -1,6 +1,6 @@
-import { defineStore } from "pinia";
+
 import { fetchEstablishments } from "~/services/getEstablishment";
-export const useEstablishmentStore = defineStore('establishment',{
+('establishment',{
     state:() => ({
         establishments : [],
         loading:false,
@@ -10,7 +10,6 @@ export const useEstablishmentStore = defineStore('establishment',{
         async loadEstablishments(){
             this.loading = true;
             this.error = null;
-
             try{
                 const data = await fetchEstablishments();
                 this.establishments = data;

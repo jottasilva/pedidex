@@ -1,7 +1,8 @@
 <template>
-    <article class="card">
+    <article class="card" :style="{ backgroundImage: 'url(http://localhost:8000/api/imgs/' + bg + ')' }">
         <section class="title">
-            <span>{{ title }}</span>
+            <span><b>{{ title }}</b></span>
+            <span class="desc">{{ description }}</span>
         </section>
         
         <section class="price">
@@ -16,22 +17,31 @@
     </article>
 </template>
 <script>
-
 export default {
-    data() {
-        return {
-            title: "Lorem ipsum dolor sit amet consectetur, adipisicing elit .Lorem ipsum dolor sit amet consectetur, adipisicing elit .",
-            price: 32.00,
-            bg: ""
+    props: {
+        title: {
+            type: String,
+            default: ""
+        },
+        price: {
+            type: Number,
+            default: 0
+        },
+        description:{
+            type:String,
+            default:""
+        },
+        bg: {
+            type: String,
+            default: ""
         }
-
     },
     methods: {
         formatCurrency(value) {
             return new Intl.NumberFormat('pt-BR', {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2,
-            }).format(value)
+            }).format(value);
         }
     }
 }
@@ -50,7 +60,10 @@ export default {
     border-radius: 4px;
     font-family: "Noto Sans", serif;
 }
-
+.desc{
+    font-size: 14px;
+    color: #525151;
+}
 .price {
     display: flex;
     width: 100%;

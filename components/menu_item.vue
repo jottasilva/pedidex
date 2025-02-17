@@ -3,44 +3,55 @@
         <div class="menu-title">
             <h1>Pizzas Salgadas</h1>
         </div>
-        <div class="menu-itens">
+        <div v-for="(produto, index) in menu" :key="produto.id" class="menu-itens">
             <section>
-                <h3>Margherita Suprema</h3>
-                <span>A tradicional reinventada, molho de tomate caseiro, mussarela de búfala derretida, folhas frescas
-                    de manjericão e um toque de azeite extra virgem.</span>
+                <h3>{{ produto.name }}</h3>
+                <span>{{ produto.description }}</span>
             </section>
             <section class="btns">
-                <section class="price"><span>R$</span><h3>32,00</h3></section>
-                <div class="bt-decrement">-</div>
-                <span class="bt-qtd">1</span>
-                <div class="bt-increment">+</div>
-            </section>
-        </div>
-        <div class="menu-itens">
-            <section>
-                <h3>Margherita Suprema</h3>
-                <span>A tradicional reinventada, molho de tomate caseiro, mussarela de búfala derretida, folhas frescas
-                    de manjericão e um toque de azeite extra virgem.</span>
-            </section>
-            <section class="btns">
-                <section class="price"><span>R$</span><h3>32,00</h3></section>
-                <div class="bt-decrement">-</div>
-                <span class="bt-qtd">1</span>
-                <div class="bt-increment">+</div>
+                <section class="price"><span>R$</span><h3>{{ produto.price }}</h3></section>
+                <div @click="decrement(index)" class="bt-decrement">-</div>
+                <span class="bt-qtd">{{ produto.quantity }}</span>
+                <div @click="increment(index)" class="bt-increment">+</div>
             </section>
         </div>
 
     </article>
 </template>
-<script>
-    export default{
-        props:{
-            product:String,
-            image:String,
-            description:String,
-            price:String,
+<script setup>
+import { fetchMenu } from '~/services/getMenu';
+
+  const menu = ref([]);
+  const error = ref('');
+    
+const loadProducts = async (id) => {
+    // Busca itens do cardápio conforme o id do estabelecimento
+    try {
+        if (id) {
+            const data = await fetchMenu(id);
+            menu.value = data.map(item=> ({...item, quantity:1}));
         }
+    } catch (err) {
+        error.value = 'Erro ao buscar itens do cardápio...';
+        console.error(err); 
     }
+};
+// Função aumentar a quantidade de um produto
+const increment = (index) => {
+    if (menu.value[index]) {
+        menu.value[index].quantity++;
+    }
+};
+
+const decrement = (index) => {
+    if (menu.value[index] && menu.value[index].quantity > 1) {
+        menu.value[index].quantity--;
+    }
+};
+
+onMounted(() => {
+    loadProducts("431ae588-c5cf-40f6-a837-e176e87257c9");
+});
 </script>
 <style lang="scss" scoped>
 .menu {

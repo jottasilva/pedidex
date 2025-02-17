@@ -4,7 +4,6 @@
             <nav>
                 <div id="navbar">
                     <section class="establishment">
-                       
                         <h2>
                             {{ establishment.name }}
                         </h2>
@@ -41,8 +40,8 @@
             </section>
            <div id="slideBox">
             <Carousel v-bind="config">
-            <Slide v-for="image in images" :key="image.id">
-            <PromoCard />
+                <Slide v-for="product in filteredSlides" :key="product.id">
+            <PromoCard :title="product.name" :description="product.description" :price="20" :bg="product.image"/>
             </Slide>
             <template #addons>
             <Pagination />
@@ -52,9 +51,6 @@
         </article>
 
         <article id="menu-itens">
-            <menu-item />
-            <menu-item />
-            <menu-item />
             <menu-item />
         </article>
         <footer-component />
@@ -66,24 +62,50 @@
 </template>
 
 <script setup>
-
 import { useModalStore } from '~/stores/modal'
 import { useToast } from 'primevue/usetoast'
 import { Carousel, Slide, Pagination} from 'vue3-carousel';
-import { fetchEstablishments } from '~/services/getEstablishment';
-import { API_URL } from '~/services/apiService';
+import { fetchEstablishments} from '~/services/getEstablishment';
+import { fetchMenu } from '~/services/getMenu'
 
+import { API_URL } from '~/services/apiService';
 const toast = useToast()
 const establishment= ref([]);
+const slide = ref([]);
 const loading = ref(false);
 const error = ref(null);
+const filteredSlides = computed(() => {
+  return slide.value.filter(item => item.promotion === true);
+});    
+const loadProducts = async (id) => {
+    // Busca itens do cardápio conforme o id do estabelecimento e com promoção ativa
+    try {
+        if (id) {
+            const data = await fetchMenu(id);
+            slide.value = data;
+        }
+    } catch (err) {
+        error.value = 'Erro ao buscar itens do cardápio...';
+        console.error(err); 
+    }
+};
+
 
 const loadEstablishment = async (id) => {
     loading.value = true;
     error.value = null;
+    // carrega dados do estabelecimento
     try {
+        const storedData = localStorage.getItem(`establishment_${id}`);
+        if (storedData) {
+            //Carregando dados do Local Storage...
+            establishment.value = JSON.parse(storedData);
+            return;
+        }
         const data = await fetchEstablishments(id);
         establishment.value = data;
+        localStorage.setItem(`establishment_${id}`, JSON.stringify(data));
+
     } catch (err) {
         error.value = 'Erro ao carregar Estabelecimento';
         console.error(err);
@@ -93,7 +115,15 @@ const loadEstablishment = async (id) => {
 };
 
 onMounted(() => {
-    loadEstablishment("ab02791e-e18d-4400-9dff-9ae997a67c18");
+    loadEstablishment("teste");
+    loadProducts("431ae588-c5cf-40f6-a837-e176e87257c9");
+    const storedData = localStorage.getItem('establishment');
+    if (storedData) {
+        const establishment = JSON.parse(storedData);
+        fetchMenu(establishment.id);
+    } else {
+        console.log("Nenhum estabelecimento salvo no Local Storage.");
+    }
 });
 
 watch(establishment, (newEstablishment) => {
@@ -114,7 +144,7 @@ const showToast = () => {
 }
 const modalStore = useModalStore();
 const { openModal } = modalStore;
-const images = Array.from({ length: 10 }, (_, index) => ({
+const images = Array.from({ length:2 }, (_, index) => ({
   id: index + 1,
   url: `https://picsum.photos/800/600?random=${index + 1}`,
 }));
