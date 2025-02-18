@@ -11,5 +11,6 @@ export const fetchEstablishments = async (id) => {
         console.error('Erro ao buscar estabelecimento:', error);
         throw error;
     }
+    
 };
 

@@ -1,75 +1,111 @@
 <template>
     <article class="menu">
-        <div class="menu-title">
-            <h1>Pizzas Salgadas</h1>
-        </div>
+      <div class="menu-title">
+        <h1>Pizzas Salgadas</h1>
+      </div>
+      
+      <div v-if="error">{{ error }}</div>
+      <div v-else-if="isLoading">Carregando...</div>
+      <div v-else>
         <div v-for="(produto, index) in menu" :key="produto.id" class="menu-itens">
-            <section>
-                <h3>{{ produto.name }}</h3>
-                <span>{{ produto.description }}</span>
+          <section>
+            <h3>{{ produto.name }}</h3>
+            <span>{{ produto.description }}</span>
+          </section>
+          <section class="btns">
+            <section class="price"><span>R$</span>
+              <h3>{{ produto.price | formatPrice }}</h3>
             </section>
-            <section class="btns">
-                <section class="price"><span>R$</span><h3>{{ produto.price }}</h3></section>
-                <div @click="decrement(index)" class="bt-decrement">-</div>
-                <span class="bt-qtd">{{ produto.quantity }}</span>
-                <div @click="increment(index)" class="bt-increment">+</div>
-            </section>
+            <div @click="updateQuantity(index, 'decrement')" class="bt-decrement">-</div>
+            <span class="bt-qtd">{{ produto.quantity }}</span>
+            <div @click="updateQuantity(index, 'increment')" class="bt-increment">+</div>
+          </section>
         </div>
-
+      </div>
     </article>
-</template>
-<script setup>
-import { fetchMenu } from '~/services/getMenu';
-
+  </template>
+  
+  <script setup>
+  import { fetchMenu } from '~/services/getMenu';
+  import { ref, onMounted, watch } from 'vue';
+  const props = defineProps({
+    uuid: {
+      type: String,
+      default: null,
+    }
+  });
+  
   const menu = ref([]);
   const error = ref('');
-    
-const loadProducts = async (id) => {
-    // Busca itens do cardápio conforme o id do estabelecimento
+  const isLoading = ref(true);
+
+  // Carregar itens do cardápio
+  const loadProducts = async (id) => {
     try {
-        if (id) {
-            const data = await fetchMenu(id);
-            menu.value = data.map(item=> ({...item, quantity:1}));
-        }
+      isLoading.value = true;
+      const data = await fetchMenu(id);
+      menu.value = data.map(item => ({ ...item, quantity: 0 }));
     } catch (err) {
-        error.value = 'Erro ao buscar itens do cardápio...';
-        console.error(err); 
+      error.value = 'Erro ao buscar itens do cardápio...';
+      console.error(err);
+    } finally {
+      isLoading.value = false;
     }
-};
-// Função aumentar a quantidade de um produto
-const increment = (index) => {
+  };
+  // Atualizar quantidade de produtos (função única para incrementar ou decrementar)
+  const updateQuantity = (index, action) => {
     if (menu.value[index]) {
+      if (action === 'increment') {
         menu.value[index].quantity++;
-    }
-};
-
-const decrement = (index) => {
-    if (menu.value[index] && menu.value[index].quantity > 1) {
+      } else if (action === 'decrement' && menu.value[index].quantity > 0) {
         menu.value[index].quantity--;
+      }
     }
-};
-
-onMounted(() => {
-    loadProducts("431ae588-c5cf-40f6-a837-e176e87257c9");
-});
-</script>
-<style lang="scss" scoped>
-.menu {
+  };
+  
+  onMounted(() => {
+    if (props.uuid) {
+      loadProducts(props.uuid);
+    }
+  });
+  // Recarregar os produtos caso o uuid seja alterado
+  watch(() => props.uuid, (newUuid) => {
+    if (newUuid) {
+      loadProducts(newUuid);
+    }
+  });
+  // Filtro para formatação de preço
+  const formatPrice = (value) => {
+    return value.toFixed(2).replace('.', ',');
+  };
+  </script>
+  
+  <style lang="scss" scoped>
+  * {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+  
+  .menu {
     display: flex;
     flex-direction: column;
     color: #444;
     margin-top: 30px;
     font-family: "Noto Sans", serif;
-}
-
-.menu-title {
+  }
+  
+  .menu-title {
     font-size: 1.6rem;
     width: 100%;
     border-bottom: 2px var(--bgGreen) solid;
     padding-bottom: 6px;
-}
-
-.menu-itens {
+  }
+  
+  .menu-itens {
     display: grid;
     grid-template-columns: 8fr 1fr;
     grid-auto-columns: auto;
@@ -77,23 +113,26 @@ onMounted(() => {
     justify-content: flex-end;
     align-items: center;
     width: 100%;
-}
-
-.menu-itens span{
-    color:#777;
-
-}
-.menu-itens> :nth-child(2n) {
+  }
+  
+  .menu-itens span {
+    color: #777;
+  }
+  
+  .menu-itens> :nth-child(2n) {
     justify-self: end;
-}
-.btns{
+  }
+  
+  .btns {
     display: flex;
     flex-direction: row;
     gap: 20px;
     align-items: center;
     justify-content: space-around;
-}
-.bt-decrement, .bt-increment{
+  }
+  
+  .bt-decrement,
+  .bt-increment {
     display: flex;
     cursor: pointer;
     align-items: center;
@@ -104,39 +143,46 @@ onMounted(() => {
     color: white;
     width: 28px;
     height: 28px;
-}
-.bt-qtd{
+  }
+  
+  .bt-qtd {
     font-weight: bold;
-    font-size:1.5rem;
-}
-.price{
+    font-size: 1.5rem;
+  }
+  
+  .price {
     display: flex;
     align-items: center;
     gap: 5px;
-    justify-content:center;
+    justify-content: center;
     width: 6vw;
-}
-
-.bt-decrement{
+  }
+  
+  .bt-decrement {
     background-color: var(--bgRed);
-}
-.bt-increment{
+  }
+  
+  .bt-increment {
     background-color: var(--bgGreen);
-}
-@media (max-width: 660px){
-    .menu-itens{
-        display: flex;
-        align-items: flex-end;
-        flex-direction: column;
+  }
+  
+  @media (max-width: 660px) {
+    .menu-itens {
+      display: flex;
+      align-items: flex-end;
+      flex-direction: column;
     }
-    .btns{
-        width: 60vw;
-        align-items: center;
+  
+    .btns {
+      width: 60vw;
+      align-items: center;
     }
-    .price{
-        flex: 1 1;
-        padding: 20px;
-        font-size: 1.5rem;
+  
+    .price {
+      flex: 1 1;
+      padding: 20px;
+      font-size: 1.5rem;
     }
-}
-</style>
+  }
+  </style>
+  

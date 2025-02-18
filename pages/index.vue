@@ -49,9 +49,8 @@
             </Carousel>
            </div>
         </article>
-
         <article id="menu-itens">
-            <menu-item />
+            <menu-item :uuid="establishment.id" />
         </article>
         <footer-component />
         <modal-menu v-if="modalStore.modal" />
@@ -67,8 +66,15 @@ import { useToast } from 'primevue/usetoast'
 import { Carousel, Slide, Pagination} from 'vue3-carousel';
 import { fetchEstablishments} from '~/services/getEstablishment';
 import { fetchMenu } from '~/services/getMenu'
-
 import { API_URL } from '~/services/apiService';
+
+// Captura o valor do parâmetro `p` da query string
+
+import { useRoute } from 'vue-router'
+const route = useRoute()
+const page = computed(() => route.query.p)
+
+
 const toast = useToast()
 const establishment= ref([]);
 const slide = ref([]);
@@ -76,14 +82,13 @@ const loading = ref(false);
 const error = ref(null);
 const filteredSlides = computed(() => {
   return slide.value.filter(item => item.promotion === true);
-});    
+}); 
+   
 const loadProducts = async (id) => {
     // Busca itens do cardápio conforme o id do estabelecimento e com promoção ativa
     try {
-        if (id) {
             const data = await fetchMenu(id);
             slide.value = data;
-        }
     } catch (err) {
         error.value = 'Erro ao buscar itens do cardápio...';
         console.error(err); 
@@ -94,11 +99,9 @@ const loadProducts = async (id) => {
 const loadEstablishment = async (id) => {
     loading.value = true;
     error.value = null;
-    // carrega dados do estabelecimento
     try {
         const storedData = localStorage.getItem(`establishment_${id}`);
         if (storedData) {
-            //Carregando dados do Local Storage...
             establishment.value = JSON.parse(storedData);
             return;
         }
@@ -114,9 +117,13 @@ const loadEstablishment = async (id) => {
     }
 };
 
-onMounted(() => {
-    loadEstablishment("teste");
-    loadProducts("431ae588-c5cf-40f6-a837-e176e87257c9");
+onMounted(async () => {
+    await loadEstablishment(page.value); 
+    if (establishment.value && establishment.value.id) {
+        loadProducts(establishment.value.id);
+    } else {
+        console.log("Erro: Estabelecimento não carregado corretamente");
+    }
     const storedData = localStorage.getItem('establishment');
     if (storedData) {
         const establishment = JSON.parse(storedData);
@@ -203,7 +210,7 @@ const config = {
 * {
     margin: 0;
     padding: 0;
-    box-sizing: 0;
+    box-sizing: border-box;
 }
 
 .p-toast {
