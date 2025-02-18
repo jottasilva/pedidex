@@ -110,6 +110,7 @@
     grid-template-columns: 8fr 1fr;
     grid-auto-columns: auto;
     gap: 50px;
+    margin-bottom:10px;
     justify-content: flex-end;
     align-items: center;
     width: 100%;

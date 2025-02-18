@@ -88,6 +88,9 @@ export default {
     justify-content: space-between;
     -webkit-line-clamp: 3;
     color:#444;
+    background: rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(13.5px);
     padding-top: 20px;
     -webkit-box-orient: vertical;
     overflow: hidden;
