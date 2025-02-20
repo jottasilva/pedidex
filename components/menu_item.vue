@@ -32,6 +32,10 @@
 import { fetchMenu } from '~/services/getMenu';
 import { ref, onMounted, watch } from 'vue';
 import { fetchSection } from '~/services/getSection';
+import { useCartStore } from '~/services/cartStore';
+import { useEstablishmentStore } from '~/services/establishmentStore';
+const store = useEstablishmentStore();
+const cartStore = useCartStore();
 const props = defineProps({
   uuid: {
     type: String,
@@ -64,7 +68,9 @@ const loadProducts = async (id) => {
       ...category,
       products: category.products?.map(product => ({
         ...product,
-        quantity: 0
+        quantity: 0,
+        client_name: "CLIENTE TESTE",
+        establishment_name:store.getEstablishment()?.name
       })) || []
     }));
 
@@ -75,9 +81,15 @@ const loadProducts = async (id) => {
     isLoading.value = false;
   }
 };
+// SAVE TO STORE FUNCTION
+const saveCart = () => {
+  const selectedItems = menu.value.flatMap(category => 
+    category.products.filter(product => product.quantity > 0)
+  );
+  cartStore.addToCart(selectedItems); 
+};
 // INCREMENT AND DECREMENT FUNCTION
 const updateQuantity = (categoryIndex, productIndex, action) => {
-  console.log("updateQuantity chamada!", { categoryIndex, productIndex, action });
   const category = menu.value?.[categoryIndex];
   const product = category?.products?.[productIndex];
   if (!product) {
@@ -86,26 +98,26 @@ const updateQuantity = (categoryIndex, productIndex, action) => {
   }
   if (action === 'increment') {
     product.quantity++;
+    saveCart(); 
   } else if (action === 'decrement' && product.quantity > 0) {
     product.quantity--;
-  } else {
-    console.warn(`Ação inválida ou quantidade já é 0!`, { action, quantity: product.quantity });
+    saveCart(); 
   }
-
   menu.value = [...menu.value];
+  saveCart();
+
 };
 onMounted(() => {
   if (props.uuid) {
     loadProducts(props.uuid);
     loadSection();
   }
-
-
 });
 
 watch(() => props.uuid, (newUuid) => {
   if (newUuid) {
     loadProducts(newUuid);
+    loadSection();
   }
 });
 

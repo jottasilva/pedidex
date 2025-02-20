@@ -42,7 +42,7 @@
     grid-auto-columns: auto;
     align-items: start;
     width: 100%;
-    max-width: 60vw;
+    max-width: 70vw;
     margin: 0 auto;
     padding: 20px 0 80px 0;
     border-top: 15px var(--bgGreen) solid;

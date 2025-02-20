@@ -13,18 +13,19 @@
                     <section class="menu">
                         <ul>
 
-                            <li @click="showToast('success', 'Sucesso!', 'Um atendente já foi solicitado, Aguarde!')">CHAMAR ATENDIMENTO</li>
+                            <li @click="showToast('success', 'Sucesso!', 'Um atendente já foi solicitado, Aguarde!')">
+                                CHAMAR ATENDIMENTO</li>
                             <li @click="openModal({ page: 'command' })">COMANDA</li>
                         </ul>
                         <div class="total">
                             <span>total dos pedidos</span>
-                            <h3>R$ 127,80</h3>
+                            <h3>{{ formattedTotal }}</h3>
                         </div>
                     </section>
                 </div>
             </nav>
             <div id="container">
-                <div id="logo"/>
+                <div id="logo" />
                 <div id="search">
                     <section class="search"></section>
                     <form action="">
@@ -38,16 +39,17 @@
             <section class="promo-slide">
                 <h1>NOSSAS PROMOÇÕES</h1>
             </section>
-           <div id="slideBox">
-            <Carousel v-bind="config">
-                <Slide v-for="product in filteredSlides" :key="product.id">
-            <PromoCard :title="product.name" :description="product.description" :price="20" :bg="product.image"/>
-            </Slide>
-            <template #addons>
-            <Pagination />
-            </template>
-            </Carousel>
-           </div>
+            <div id="slideBox">
+                <Carousel v-bind="config">
+                    <Slide v-for="product in filteredSlides" :key="product.id">
+                        <PromoCard :title="product.name" :description="product.description" :price="20"
+                            :bg="product.image" />
+                    </Slide>
+                    <template #addons>
+                        <Pagination />
+                    </template>
+                </Carousel>
+            </div>
         </article>
         <article id="menu-itens">
             <menu-item :uuid="establishment.id" />
@@ -63,85 +65,73 @@
 <script setup>
 import { useModalStore } from '~/stores/modal'
 import { useToast } from 'primevue/usetoast'
-import { Carousel, Slide, Pagination} from 'vue3-carousel';
-import { fetchEstablishments} from '~/services/getEstablishment';
+import { Carousel, Slide, Pagination } from 'vue3-carousel';
+import { fetchEstablishments } from '~/services/getEstablishment';
 import { fetchMenu } from '~/services/getMenu'
 import { API_URL } from '~/services/apiService';
-
-// Captura o valor do parâmetro `page` da query string
 import { useRoute } from 'vue-router'
-const route = useRoute()
-const page = computed(() => route.query.p)
-
-
-const toast = useToast()
-const establishment= ref([]);
+import { useEstablishmentStore } from '~/services/establishmentStore';
+import { useCartStore } from '~/services/cartStore';
+const store = useEstablishmentStore();
+const cartStore = useCartStore();
+const route = useRoute();
+const page = computed(() => route.query.p);
+const toast = useToast();
+const total = computed(() => cartStore.getTotal());
+const establishment = ref([]);
 const slide = ref([]);
 const loading = ref(false);
 const error = ref(null);
 const filteredSlides = computed(() => {
-  return slide.value.filter(item => item.promotion === true);
-}); 
-   
+    return slide.value.filter(item => item.promotion === true);
+});
+const formattedTotal = computed(() => {
+  return formatCurrency(total.value);
+});
+const formatCurrency = (value) => {
+  return new Intl.NumberFormat('pt-BR', {
+    style: 'currency',
+    currency: 'BRL',
+  }).format(value);
+};
 const loadProducts = async (id) => {
-    // Busca itens do cardápio conforme o id do estabelecimento e com promoção ativa
     try {
-            const data = await fetchMenu(id);
-            slide.value = data;
+        const data = await fetchMenu(id);
+        slide.value = data;
     } catch (err) {
         error.value = 'Erro ao buscar itens do cardápio...';
         showToast('error', 'Ops.', error)
-        console.error(err); 
+        console.error(err);
     }
 };
-
-
 const loadEstablishment = async (id) => {
-    if(page != null && page.value != ''){
+    if (page != null && page.value != '') {
         loading.value = true;
         error.value = null;
         try {
-            const storedData = localStorage.getItem(`establishment_${id}`);
-            if (storedData) {
-                establishment.value = JSON.parse(storedData);
-                return;
-            }
             const data = await fetchEstablishments(id);
             establishment.value = data;
-            localStorage.setItem(`establishment_${id}`, JSON.stringify(data));
-
+            store.setEstablishment(data);
         } catch (err) {
             error.value = 'Erro ao carregar Estabelecimento';
             console.error(err);
         } finally {
             loading.value = false;
         }
-    }else{
+    } else {
         showToast('warn', 'URL INVALIDA!', 'a URL inserida esta incorreta')
     }
 };
 
 onMounted(async () => {
-    await loadEstablishment(page.value); 
-    if (establishment.value && establishment.value.id) {
-        loadProducts(establishment.value.id);
-    } else {
-        showToast('error', 'Erro ao tentar Carregar', 'Não foi possivel carregar os produtos corretamente.')
-        return false;
-    }
-    const storedData = localStorage.getItem('establishment');
-    if (storedData) {
-        const establishment = JSON.parse(storedData);
-        fetchMenu(establishment.id);
-    } else {
-        console.log("Nenhum estabelecimento salvo no Local Storage.");
-        return false;
-    }
+    await loadEstablishment(page.value);
+    await loadProducts(establishment.value.id)
+    cartStore.initializeCart();
 });
 
 watch(establishment, (newEstablishment) => {
     if (newEstablishment && newEstablishment.image) {
-        document.documentElement.style.setProperty('--bgImage', `url(${API_URL+"imgs/"+newEstablishment.image})`);
+        document.documentElement.style.setProperty('--bgImage', `url(${API_URL + "imgs/" + newEstablishment.image})`);
     }
 }, { deep: true, immediate: true });
 
@@ -162,58 +152,62 @@ const { openModal } = modalStore;
 
 
 const config = {
-  height:400,
-  itemsToShow: 1,
-  gap: 5,
-  snapAlign: 'center',
-  breakpointMode: 'carousel',
-  breakpoints: {
+    height: 400,
+    itemsToShow: 1,
+    gap: 5,
+    snapAlign: 'center',
+    breakpointMode: 'carousel',
+    breakpoints: {
 
-    400: {
-      itemsToShow: 1,
-      snapAlign: 'start',
+        400: {
+            itemsToShow: 1,
+            snapAlign: 'start',
+        },
+        500: {
+            itemsToShow: 2,
+            snapAlign: 'start',
+        },
+        768: {
+            itemsToShow: 3,
+            snapAlign: 'start',
+        },
+        1024: {
+            itemsToShow: 4,
+            snapAlign: 'start',
+        },
     },
-    500: {
-      itemsToShow: 2,
-      snapAlign: 'start',
-    },
-    768: {
-      itemsToShow:3,
-      snapAlign: 'start',
-    },
-    1024: {
-      itemsToShow:4,
-      snapAlign: 'start',
-    },
-  },
 };
 </script>
 
 <style lang="scss">
-#slideBox{
+#slideBox {
     width: 61vw;
-    margin-bottom:100px;
+    margin-bottom: 100px;
 
-    padding:10px 0;
+    padding: 10px 0;
 }
+
 .carousel__pagination {
-  position: relative;
-  bottom: -60px; 
-  display: flex;
-  justify-content: center;
-  
+    position: relative;
+    bottom: -60px;
+    display: flex;
+    justify-content: center;
+
 }
+
 .carousel__pagination-button {
-  width: 12px;
-  height: 12px;
-  background-color: #ccc;
-  border-radius: 50%;
-  transition: background-color 0.3s ease;
+    width: 12px;
+    height: 12px;
+    background-color: #ccc;
+    border-radius: 50%;
+    transition: background-color 0.3s ease;
 }
+
 .carousel__pagination-button--active {
-  background-color: var(--bgGreen); 
-  transform: scale(1.3);
+    background-color: var(--bgGreen);
+    transform: scale(1.3);
 }
+
 * {
     margin: 0;
     padding: 0;
@@ -256,6 +250,7 @@ const config = {
     font-weight: bold;
 
 }
+
 .p-toast-detail {
     color: #000 !important;
 }
@@ -294,7 +289,7 @@ body {
     --bgGreen: #009c8d;
     --bgRed: #c61b19;
     --bgBlue: #133d67;
-    --bgImage:"";
+    --bgImage: "";
 }
 
 nav {
@@ -404,10 +399,12 @@ header {
     font-size: .8rem;
     color: var(--bgGreen);
 }
+
 .establishment h2 {
     font-size: clamp(1em, 1em + 1vw, 1.5em);
 
 }
+
 .total {
     display: flex;
     flex-direction: column;
@@ -501,22 +498,26 @@ header {
     nav {
         flex: 1 1 30%;
     }
+
     .p-toast-message-success {
-    width:40vw;
-    background-color: #4caf50 !important;
-    border-left: 5px solid #2e7d32 !important;
-    color: #fff !important;
-    font-weight: bold;
+        width: 40vw;
+        background-color: #4caf50 !important;
+        border-left: 5px solid #2e7d32 !important;
+        color: #fff !important;
+        font-weight: bold;
     }
+
     .p-toast {
         top: 90vh !important;
         right: 40px !important;
         padding: 2px;
     }
+
     header {
         height: 80vh;
         padding-bottom: 30px;
     }
+
     #navbar {
         flex-direction: column;
         height: 40vh;
@@ -524,6 +525,7 @@ header {
         align-items: center;
         justify-content: center;
     }
+
     .establishment {
         width: 80vw;
         gap: 12px;
@@ -540,41 +542,49 @@ header {
         width: 80vw;
 
     }
+
     .total {
         align-items: center;
     }
+
     .total span {
         line-height: 40px;
         font-size: 1.5rem;
     }
+
     .total h3 {
         line-height: 40px;
         font-size: 3rem;
     }
+
     #container {
         width: 80vw;
         box-shadow: none;
     }
-    .promo-slide{
+
+    .promo-slide {
         align-items: center;
         justify-content: center;
         text-align: center;
     }
-    .promo-slide h1{
+
+    .promo-slide h1 {
         font-size: 26px;
     }
+
     #logo {
         background-size: 60%;
         align-self: center;
         margin-top: 0;
     }
-    #slideBox{
-    width: 84vw;
+
+    #slideBox {
+        width: 84vw;
     }
+
     #search {
         margin-top: 10px;
         box-shadow: none;
     }
 }
-
 </style>
