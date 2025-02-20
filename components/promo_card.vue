@@ -67,6 +67,10 @@ export default {
     align-items: baseline;
     border-radius: 4px;
     font-family: "Noto Sans", serif;
+    transition: all .4s ease-in-out;
+}
+.card:hover{
+    background-position: -10px -80px;
 }
 .desc{
     font-size: 14px;
@@ -79,6 +83,8 @@ export default {
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
+    background-color: #edeef3;
+    border-radius:0 0 5px 5px;
 }
 
 .title {

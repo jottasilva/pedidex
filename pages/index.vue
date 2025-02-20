@@ -13,7 +13,7 @@
                     <section class="menu">
                         <ul>
 
-                            <li @click="showToast()">CHAMAR ATENDIMENTO</li>
+                            <li @click="showToast('success', 'Sucesso!', 'Um atendente já foi solicitado, Aguarde!')">CHAMAR ATENDIMENTO</li>
                             <li @click="openModal({ page: 'command' })">COMANDA</li>
                         </ul>
                         <div class="total">
@@ -34,9 +34,9 @@
             </div>
         </header>
 
-        <article id="middle">
+        <article v-if="filteredSlides.length > 0" id="middle">
             <section class="promo-slide">
-                <h1>NOSSAS PROMOÇOES</h1>
+                <h1>NOSSAS PROMOÇÕES</h1>
             </section>
            <div id="slideBox">
             <Carousel v-bind="config">
@@ -68,8 +68,7 @@ import { fetchEstablishments} from '~/services/getEstablishment';
 import { fetchMenu } from '~/services/getMenu'
 import { API_URL } from '~/services/apiService';
 
-// Captura o valor do parâmetro `p` da query string
-
+// Captura o valor do parâmetro `page` da query string
 import { useRoute } from 'vue-router'
 const route = useRoute()
 const page = computed(() => route.query.p)
@@ -91,29 +90,34 @@ const loadProducts = async (id) => {
             slide.value = data;
     } catch (err) {
         error.value = 'Erro ao buscar itens do cardápio...';
+        showToast('error', 'Ops.', error)
         console.error(err); 
     }
 };
 
 
 const loadEstablishment = async (id) => {
-    loading.value = true;
-    error.value = null;
-    try {
-        const storedData = localStorage.getItem(`establishment_${id}`);
-        if (storedData) {
-            establishment.value = JSON.parse(storedData);
-            return;
-        }
-        const data = await fetchEstablishments(id);
-        establishment.value = data;
-        localStorage.setItem(`establishment_${id}`, JSON.stringify(data));
+    if(page != null && page.value != ''){
+        loading.value = true;
+        error.value = null;
+        try {
+            const storedData = localStorage.getItem(`establishment_${id}`);
+            if (storedData) {
+                establishment.value = JSON.parse(storedData);
+                return;
+            }
+            const data = await fetchEstablishments(id);
+            establishment.value = data;
+            localStorage.setItem(`establishment_${id}`, JSON.stringify(data));
 
-    } catch (err) {
-        error.value = 'Erro ao carregar Estabelecimento';
-        console.error(err);
-    } finally {
-        loading.value = false;
+        } catch (err) {
+            error.value = 'Erro ao carregar Estabelecimento';
+            console.error(err);
+        } finally {
+            loading.value = false;
+        }
+    }else{
+        showToast('warn', 'URL INVALIDA!', 'a URL inserida esta incorreta')
     }
 };
 
@@ -122,7 +126,8 @@ onMounted(async () => {
     if (establishment.value && establishment.value.id) {
         loadProducts(establishment.value.id);
     } else {
-        console.log("Erro: Estabelecimento não carregado corretamente");
+        showToast('error', 'Erro ao tentar Carregar', 'Não foi possivel carregar os produtos corretamente.')
+        return false;
     }
     const storedData = localStorage.getItem('establishment');
     if (storedData) {
@@ -130,6 +135,7 @@ onMounted(async () => {
         fetchMenu(establishment.id);
     } else {
         console.log("Nenhum estabelecimento salvo no Local Storage.");
+        return false;
     }
 });
 
@@ -139,22 +145,21 @@ watch(establishment, (newEstablishment) => {
     }
 }, { deep: true, immediate: true });
 
-const showToast = () => {
+const showToast = (severity, summary, detail) => {
     toast.add({
-        severity: 'success',
-        summary: 'Atendimento Solicitado com sucesso!',
-        detail: 'Aguarde um momento, você já sera atendido!',
+        severity: severity,
+        summary: summary,
+        detail: detail,
         life: 4000,
         group: 'bl'
     })
- 
+    //severity: Define a severidade do toast (por exemplo, "success", "info", "warn", "error").
+    //summary: Define um título curto para a notificação.
+    //detail: Define uma mensagem mais detalhada da notificação.
 }
 const modalStore = useModalStore();
 const { openModal } = modalStore;
-const images = Array.from({ length:2 }, (_, index) => ({
-  id: index + 1,
-  url: `https://picsum.photos/800/600?random=${index + 1}`,
-}));
+
 
 const config = {
   height:400,
@@ -188,6 +193,8 @@ const config = {
 #slideBox{
     width: 61vw;
     margin-bottom:100px;
+
+    padding:10px 0;
 }
 .carousel__pagination {
   position: relative;
