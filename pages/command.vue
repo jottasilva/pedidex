@@ -103,13 +103,13 @@
 
 <script setup>
 import { ref } from "vue";
-
 const selectedPaym = ref();
 const paym = ref([
     { name: 'Pix', code: 'PIX' },
     { name: 'Dinheiro', code: 'DINHEIRO' },
     { name: 'Cartão', code: 'CARTAO' },
 ]);
+
 </script>
 <style lang="scss" scoped>
 .p-stepper {

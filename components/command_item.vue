@@ -1,15 +1,15 @@
 <template>
     <div>
         <section class="grid">
-            <article v-for="(item, index) in produtos" :key="index" class="item" :class="{ 'riscado': item.quantidade === 0 }">
+            <article v-for="(item, index) in products" :key="item.id" class="item" :class="{ 'riscado': item.quantity=== 0 }">
                 <section class="info">
-                    <h3 class="title">{{ item.nome }}</h3>
+                    <h3 class="title">{{ item.name }}</h3>
                 </section>
                 <section class="btns">
-                    <h3 class="price">R$ {{ item.preco.toFixed(2) }}</h3>
-                    <span class="btn" @click="alterarQuantidade(index, -1)">-</span>
-                    <span class="quantity">{{ item.quantidade }}</span>
-                    <span class="btn" @click="alterarQuantidade(index, 1)">+</span>
+                    <h3 class="price">R$ {{ formatPrice(item.price) }}</h3>
+                    <span class="btn" @click="updateQuantity(index, -1)">-</span>
+                    <span class="quantity">{{ item.quantity }}</span>
+                    <span class="btn" @click="updateQuantity(index, 1)">+</span>
                 </section>
             </article>
         </section>
@@ -25,7 +25,7 @@
                 <template #end>
                     <div class="amount">
                         <h3>TOTAL </h3>
-                        <h3>R$ 76,40</h3>
+                        <h3>R$ {{ formatPrice(getTotalCart()) }}</h3>
                     </div>
                 </template>
             </Toolbar>
@@ -35,18 +35,23 @@
 
 <script setup>
 import { ref } from "vue";
-
-const produtos = ref([
-    { nome: "Pizza Calabresa", preco: 37.80, quantidade: 1 },
-    { nome: "Hambúrguer Artesanal", preco: 29.90, quantidade: 2 },
-    { nome: "Refrigerante 2L", preco: 9.50, quantidade: 3 }
-]);
-
-const alterarQuantidade = (index, valor) => {
-    if (produtos.value[index].quantidade + valor >= 0) {
-        produtos.value[index].quantidade += valor;
+import { useCartStore } from "~/services/cartStore";
+const cartStore = useCartStore();
+const formatPrice = (value) => {
+  const num = Number(value);
+  return isNaN(num) ? '0,00' : num.toFixed(2).replace('.', ',');
+};
+const updateQuantity = (index, amount) => {
+    if (products.value[index].quantity + amount >= 0) {
+        cartStore.cartItems[index].quantity += amount;
+        cartStore.saveToLocalStorage()
     }
 };
+onMounted(()=>{
+    cartStore.initializeCart();
+});
+const products = computed(()=> cartStore.cartItems);
+const getTotalCart = computed(()=> cartStore.getTotal);
 </script>
 
 <style lang="scss" scoped>

@@ -1,6 +1,6 @@
 <template>
   <article class="menu">
-    <div v-for="(produts, categoryIndex) in menu" :key="produts.id">
+    <div v-for="(produts) in filteredProducts" :key="produts.id">
       <div class="menu-title">
         <h1>{{ produts.name }}</h1>
       </div>
@@ -8,32 +8,35 @@
       <div v-if="error">{{ error }}</div>
       <div v-else-if="isLoading">Carregando...</div>
       <div v-else>
-        <div v-for="(produto, productIndex) in produts.products" :key="produto.id" class="menu-itens">
+        <div v-for="(produto) in produts.products" :key="produto.id" class="menu-itens">
           <section>
             <h3>{{ produto.name }}</h3>
             <span>{{ produto.description }}</span>
           </section>
           <section class="btns">
-            <section class="price"><span>R$</span>
+            <section class="price">
+              <span>R$</span>
               <h3>{{ formatPrice(produto.quantity > 0 ? produto.price * produto.quantity : produto.price) }}</h3>
-
             </section>
-            <div @click="updateQuantity(categoryIndex, productIndex, 'decrement')" class="bt-decrement">-</div>
+            <div @click="updateQuantity(produto.id, 'decrement')" class="bt-decrement">-</div>
             <span class="bt-qtd">{{ produto.quantity }}</span>
-            <div @click="updateQuantity(categoryIndex, productIndex, 'increment')" class="bt-increment">+</div>
+            <div @click="updateQuantity(produto.id, 'increment')" class="bt-increment">+</div>
           </section>
         </div>
       </div>
     </div>
-
   </article>
 </template>
+
 <script setup>
 import { fetchMenu } from '~/services/getMenu';
 import { ref, onMounted, watch } from 'vue';
 import { fetchSection } from '~/services/getSection';
 import { useCartStore } from '~/services/cartStore';
 import { useEstablishmentStore } from '~/services/establishmentStore';
+import { useSearchStore } from '~/services/searchService';
+const searchStore = useSearchStore();
+const searchQuery = ref("");
 const store = useEstablishmentStore();
 const cartStore = useCartStore();
 const props = defineProps({
@@ -46,6 +49,7 @@ const menu = ref([]);
 const sections = ref([]);
 const error = ref('');
 const isLoading = ref(true);
+
 // Carregar Sessões
 const loadSection = async (id) => {
   try {
@@ -81,6 +85,28 @@ const loadProducts = async (id) => {
     isLoading.value = false;
   }
 };
+// FIND ID ARRAY
+const findOriginalIndexes = (categoryIndex, productIndex) => {
+  const category = menu.value[categoryIndex];
+  const product = filteredProducts.value[categoryIndex].products[productIndex];
+  
+  const originalCategoryIndex = menu.value.findIndex(cat => cat.id === category.id);
+  const originalProductIndex = menu.value[originalCategoryIndex].products.findIndex(prod => prod.id === product.id);
+
+  return { originalCategoryIndex, originalProductIndex };
+};
+// Filtro de busca
+const filteredProducts = computed(() => {
+  if (!searchStore.searchQuery) return menu.value; // Retorna o menu completo se não houver consulta
+  
+  return menu.value.map(category => ({
+    ...category,
+    products: category.products.filter(product =>
+      product.description.toLowerCase().includes(searchStore.searchQuery.toLowerCase())
+    )
+  })).filter(category => category.products.length > 0); // Remove categorias vazias
+});
+
 // SAVE TO STORE FUNCTION
 const saveCart = () => {
   const selectedItems = menu.value.flatMap(category => 
@@ -89,24 +115,33 @@ const saveCart = () => {
   cartStore.addToCart(selectedItems); 
 };
 // INCREMENT AND DECREMENT FUNCTION
-const updateQuantity = (categoryIndex, productIndex, action) => {
-  const category = menu.value?.[categoryIndex];
-  const product = category?.products?.[productIndex];
-  if (!product) {
-    console.error(`Erro: Produto ou categoria inválida!`, { categoryIndex, productIndex, menu: menu.value });
+const updateQuantity = (productId, action) => {
+  // Encontrar a categoria e o produto no menu original
+  const category = menu.value.find(cat => cat.products.some(prod => prod.id === productId));
+
+  if (!category) {
+    console.error(`Erro: Categoria não encontrada para o produto ${productId}`, { menu: menu.value });
     return;
   }
+
+  const product = category.products.find(prod => prod.id === productId);
+
+  if (!product) {
+    console.error(`Erro: Produto ${productId} não encontrado na categoria`, { category });
+    return;
+  }
+
+  // Alterar a quantidade do produto
   if (action === 'increment') {
     product.quantity++;
-    saveCart(); 
   } else if (action === 'decrement' && product.quantity > 0) {
     product.quantity--;
-    saveCart(); 
   }
-  menu.value = [...menu.value];
-  saveCart();
 
+  menu.value = [...menu.value]; // Atualiza o estado para reatividade
+  saveCart(); // Salvar no carrinho
 };
+
 onMounted(() => {
   if (props.uuid) {
     loadProducts(props.uuid);

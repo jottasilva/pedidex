@@ -12,7 +12,6 @@
                     <NuxtPage />
                     <section class="menu">
                         <ul>
-
                             <li @click="showToast('success', 'Sucesso!', 'Um atendente já foi solicitado, Aguarde!')">
                                 CHAMAR ATENDIMENTO</li>
                             <li @click="openModal({ page: 'command' })">COMANDA</li>
@@ -29,7 +28,7 @@
                 <div id="search">
                     <section class="search"></section>
                     <form action="">
-                        <input type="text" placeholder="faça uma pesquisa">
+                        <input  @input="updateSearchQuery" v-model="searchStore.searchQuery" type="text" placeholder="faça uma pesquisa">
                     </form>
                 </div>
             </div>
@@ -42,7 +41,7 @@
             <div id="slideBox">
                 <Carousel v-bind="config">
                     <Slide v-for="product in filteredSlides" :key="product.id">
-                        <PromoCard :title="product.name" :description="product.description" :price="20"
+                        <PromoCard :title="product.name" :description="product.description" :price=parseFloat(product.price)
                             :bg="product.image" />
                     </Slide>
                     <template #addons>
@@ -72,6 +71,8 @@ import { API_URL } from '~/services/apiService';
 import { useRoute } from 'vue-router'
 import { useEstablishmentStore } from '~/services/establishmentStore';
 import { useCartStore } from '~/services/cartStore';
+import { useSearchStore } from '~/services/searchService';
+const searchStore = useSearchStore();
 const store = useEstablishmentStore();
 const cartStore = useCartStore();
 const route = useRoute();
@@ -82,22 +83,31 @@ const establishment = ref([]);
 const slide = ref([]);
 const loading = ref(false);
 const error = ref(null);
+
+const updateSearchQuery = () => {
+  searchStore.setSearchQuery(searchStore.searchQuery);
+};
+
 const filteredSlides = computed(() => {
-    return slide.value.filter(item => item.promotion === true);
+    return slide.value.flatMap(section =>
+        section.products.filter(item => item.promotion === true)
+    );
 });
+
 const formattedTotal = computed(() => {
-  return formatCurrency(total.value);
+    return formatCurrency(total.value);
 });
 const formatCurrency = (value) => {
-  return new Intl.NumberFormat('pt-BR', {
-    style: 'currency',
-    currency: 'BRL',
-  }).format(value);
+    return new Intl.NumberFormat('pt-BR', {
+        style: 'currency',
+        currency: 'BRL',
+    }).format(value);
 };
 const loadProducts = async (id) => {
     try {
         const data = await fetchMenu(id);
         slide.value = data;
+
     } catch (err) {
         error.value = 'Erro ao buscar itens do cardápio...';
         showToast('error', 'Ops.', error)
@@ -130,6 +140,7 @@ onMounted(async () => {
 });
 
 watch(establishment, (newEstablishment) => {
+    console.log(searchStore.searchQuery)
     if (newEstablishment && newEstablishment.image) {
         document.documentElement.style.setProperty('--bgImage', `url(${API_URL + "imgs/" + newEstablishment.image})`);
     }

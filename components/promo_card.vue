@@ -23,10 +23,7 @@ export default {
             type: String,
             default: ""
         },
-        price: {
-            type: Number,
-            default: 0
-        },
+        price: [Number, String],
         description:{
             type:String,
             default:""
