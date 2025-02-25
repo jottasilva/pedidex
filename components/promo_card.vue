@@ -67,7 +67,7 @@ export default {
     transition: all .4s ease-in-out;
 }
 .card:hover{
-    background-position: -10px -80px;
+    scale: 1.04;
 }
 .desc{
     font-size: 14px;
