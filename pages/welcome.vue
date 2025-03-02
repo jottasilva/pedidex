@@ -1,48 +1,48 @@
 <template>
   <div id="content">
-    <div id="header">
-      <div class="logo" />
-    </div>
-    <div id="middle">
-      <article>
-        <section class="title">
-          <h1>TRANSFORME PEDIDOS</h1>
-          <p>em experiência, digitalize seu cardápio agora!</p>
-        </section>
-        <article class="description">
-          <section>
-            <img width="42" height="42" src="/imgs/icons-landingpage/sustentabilidade.svg">
-            <span>Elimina a necessidade de cardápios impressos</span>
-          </section>
-          <section>
-            <img width="42" height="42" src="/imgs/icons-landingpage/handshake.svg">
-            <span>Reduza o tempo de atendimento aos seus clientes.</span>
-          </section>
-          <section>
-            <img width="42" height="42" src="/imgs/icons-landingpage/clock.svg">
-            <span>Minimiza tempo e equívocos na comunicação entre clientes e equipe</span>
-          </section>
-        </article>
-      </article>
-      <div class="mascot" />
-    </div>
-    <footer>
-      <section class="smartphones"></section>
-      <article class="footer">
-        <span>ENTRAR EM CONTATO</span>
-        <section class="social-icons">
-          <a href="">
-            <img src="/imgs/icons-landingpage/facebook.svg" alt="facebook icon"></a>
-          <a href="">
-            <img src="/imgs/icons-landingpage/whatsapp.svg" alt="whatsapp icon"></a>
-          <a href="">
-            <img src="/imgs/icons-landingpage/instagram.svg" alt="whatsapp instagram">
-          </a>
-        </section>
-      </article>
+      <div id="header">
+          <div class="logo" />
+      </div>
+      <main id="middle">
+          <article>
+              <section class="title">
+                  <h1>TRANSFORME PEDIDOS</h1>
+                  <p>em experiência, digitalize seu cardápio agora!</p>
+              </section>
+              <article class="description">
+                  <section>
+                      <img width="42" height="42" src="/imgs/icons-landingpage/sustentabilidade.svg">
+                      <span>Elimina a necessidade de cardápios impressos</span>
+                  </section>
+                  <section>
+                      <img width="42" height="42" src="/imgs/icons-landingpage/handshake.svg">
+                      <span>Reduza o tempo de atendimento aos seus clientes.</span>
+                  </section>
+                  <section>
+                      <img width="42" height="42" src="/imgs/icons-landingpage/clock.svg">
+                      <span>Minimiza tempo e equívocos na comunicação entre clientes e equipe</span>
+                  </section>
+              </article>
+          </article>
+          <div class="mascot" />
+      </main>
+      <footer>
+          <section class="smartphones"></section>
+          <article class="footer">
+              <span>ENTRAR EM CONTATO</span>
+              <section class="social-icons">
+                  <a href="">
+                      <img src="/imgs/icons-landingpage/facebook.svg" alt="facebook icon"></a>
+                  <a href="">
+                      <img src="/imgs/icons-landingpage/whatsapp.svg" alt="whatsapp icon"></a>
+                  <a href="">
+                      <img src="/imgs/icons-landingpage/instagram.svg" alt="whatsapp instagram">
+                  </a>
+              </section>
+          </article>
 
 
-    </footer>
+      </footer>
   </div>
 </template>
 
@@ -53,20 +53,24 @@
 <style scoped lang="scss">
 @import url('https://fonts.googleapis.com/css2?family=Bakbak+One&display=swap');
 
+
+
 #content {
- display: flex;
- align-items: center;
- justify-content: flex-start;
- flex-direction: column;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex-direction: column;
   user-select: none;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
-  overflow-x: hidden;
+  overflow: hidden !important;
   width: 100%;
-  min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
   background: url('/imgs/bg-landingpage.svg');
   background-size: cover;
+  background-attachment: fixed;
 }
 
 #header {
@@ -175,9 +179,11 @@ footer {
   border-radius: 5px;
   transition: all .4s ease-in-out;
 }
-.footer span:hover{
+
+.footer span:hover {
   scale: 1.05;
 }
+
 .social-icons {
   display: flex;
   z-index: 1;
@@ -201,17 +207,17 @@ footer {
 
 @media (max-width: 768px) {
   .mascot {
-    max-width: 250px;
-    top: 60%;
+      max-width: 250px;
+      top: 60%;
   }
 
   footer {
-    flex-direction: column;
-    text-align: center;
+      flex-direction: column;
+      text-align: center;
   }
 
   .social-icons {
-    justify-content: center;
+      justify-content: center;
   }
 }
 </style>

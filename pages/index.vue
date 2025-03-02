@@ -195,7 +195,6 @@ const config = {
 #slideBox {
     width: 61vw;
     margin-bottom: 100px;
-
     padding: 10px 0;
 }
 
