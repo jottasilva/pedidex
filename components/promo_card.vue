@@ -58,7 +58,7 @@ export default {
     width: 90%;
     background: url('../public/imgs/pizza1.png') no-repeat #edeef3;
     background-size: cover;
-    background-position: center;
+    background-position: 10px -130px;
     height: 100%;
     justify-content: flex-end;
     align-items: baseline;
@@ -66,9 +66,7 @@ export default {
     font-family: "Noto Sans", serif;
     transition: all .4s ease-in-out;
 }
-.card:hover{
-    scale: 1.04;
-}
+
 .desc{
     font-size: 14px;
     color: #525151;

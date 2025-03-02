@@ -1,357 +1,217 @@
 <template>
-    <div id="content">
-      <section class="body">
-        <div class="img"/>
-        <div class="description">
-            <div class="logo"></div>
-            <div class="text">
-              <article class="infos">
-                <section class="icon-sustent"></section>
-                <section class="desc">
-                  <h3>Elimina a necessidade de cardápios impressos</h3>
-                  <span>contribuindo para a redução do uso de papel e promovendo práticas mais ecológicas.</span>
-                </section>
-               </article>
-               <article class="infos">
-                <section class="icon-hands"></section>
-                <section class="desc">
-                  <h3>Elimina a necessidade de cardápios impressos</h3>
-                  <span>contribuindo para a redução do uso de papel e promovendo práticas mais ecológicas.</span>
-                </section>
-               </article>
-               <article class="infos">
-                <section class="icon-clock"></section>
-                <section class="desc">
-                  <h3>Elimina a necessidade de cardápios impressos</h3>
-                  <span>contribuindo para a redução do uso de papel e promovendo práticas mais ecológicas.</span>
-                </section>
-               </article>
-               <article class="infos">
-                <section class="icon-qrcode"></section>
-                <section class="desc">
-                  <h3>Elimina a necessidade de cardápios impressos</h3>
-                  <span>contribuindo para a redução do uso de papel e promovendo práticas mais ecológicas.</span>
-                </section>
-               </article>
-               
-            </div>
-        </div>
-        
-      </section>
-      <div class="btn-wpp">CONHECER AGORA</div>
-      <div class="footer">
-          <a href=""><div class="icon-face"/></a>
-          <a href=""><div class="icon-instagram"/></a>
-          <a href=""><div class="icon-wpp"/></a>
-      </div>
+  <div id="content">
+    <div id="header">
+      <div class="logo" />
     </div>
-  </template>
-  
-  <script setup>
-  
-  </script>
-  
-  <style scoped>
-* {
-    user-select: none; 
-    -webkit-user-select: none; 
-    -moz-user-select: none; 
-    -ms-user-select: none;
-  }
-  #content{
-    background: url(../../frontend/public/imgs/bghome.svg);
-    position: relative;
-    background-repeat: no-repeat;
-    flex-direction: column;
-    background-position: center;
-    backdrop-filter: blur(10px); 
-    -webkit-backdrop-filter: blur(10px);
-    display: flex;
-    width: 100%;
-    padding-top: 120px;
-    height: 100vh;
-    align-items: center;
-    flex: 1;
-    z-index: 0;
-    background-size:120%;
-  }
-  #content::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(0); 
-    -webkit-backdrop-filter: blur(0);
-    z-index: 0;
-    animation: backdropAnimation 7s infinite alternate;
-}
-@keyframes backdropAnimation {
-  0% {
-    backdrop-filter: blur(0);
-    -webkit-backdrop-filter: blur(0);
-    background: rgba(255, 255, 255, 0.1);
-  }
-  50% {
-    backdrop-filter: blur(220px);
-    -webkit-backdrop-filter: blur(220px);
-    background: rgba(255, 255, 255, 0.05);
-  }
-  100% {
-    backdrop-filter: blur(40px);
-    -webkit-backdrop-filter: blur(40px);
-    background: rgba(255, 255, 255, 0.02);
-  }
-}
+    <div id="middle">
+      <article>
+        <section class="title">
+          <h1>TRANSFORME PEDIDOS</h1>
+          <p>em experiência, digitalize seu cardápio agora!</p>
+        </section>
+        <article class="description">
+          <section>
+            <img width="42" height="42" src="/imgs/icons-landingpage/sustentabilidade.svg">
+            <span>Elimina a necessidade de cardápios impressos</span>
+          </section>
+          <section>
+            <img width="42" height="42" src="/imgs/icons-landingpage/handshake.svg">
+            <span>Reduza o tempo de atendimento aos seus clientes.</span>
+          </section>
+          <section>
+            <img width="42" height="42" src="/imgs/icons-landingpage/clock.svg">
+            <span>Minimiza tempo e equívocos na comunicação entre clientes e equipe</span>
+          </section>
+        </article>
+      </article>
+      <div class="mascot" />
+    </div>
+    <footer>
+      <section class="smartphones"></section>
+      <article class="footer">
+        <span>ENTRAR EM CONTATO</span>
+        <section class="social-icons">
+          <a href="">
+            <img src="/imgs/icons-landingpage/facebook.svg" alt="facebook icon"></a>
+          <a href="">
+            <img src="/imgs/icons-landingpage/whatsapp.svg" alt="whatsapp icon"></a>
+          <a href="">
+            <img src="/imgs/icons-landingpage/instagram.svg" alt="whatsapp instagram">
+          </a>
+        </section>
+      </article>
 
-  .body{
-    display: flex;
-    width: 70vw;
-    height: 80vh;
-    z-index: 1;
-    margin: 0 auto;
-  }
-  .img{
-    display: flex;
-    width: 35vw;
-    background:url('../public/imgs/print.svg');
-    background-repeat: no-repeat;
-    background-size: cover;
-    margin-top: 50px;
-    background-position: top center;
-  }
 
-  .description{
-    display: flex;
-    max-width: 35vw;
-    flex: 1;
-    flex-direction: column;
-  }
-  .logo{
-    width: 280px;
-    height:200px;
-    background:url('../public/imgs/logo-ladingpage.svg');
-    background-repeat: no-repeat;
-  }
-  .icon-sustent{
-    display: flex;
-    width: 60px;
-    height: 60px;
-    background:url('../public/imgs/sustentabilidade.svg') var(--bgBlue);
-    background-repeat: no-repeat;
-    background-size: 35px;
-    background-position: center;
-    border-radius: 6px;
-  }
-  .icon-hands{
-    display: flex;
-    width: 60px;
-    height: 60px;
-    background:url('../public/imgs/hands.svg') var(--bgBlue);
-    background-repeat: no-repeat;
-    background-size: 35px;
-    background-position: center;
-    border-radius: 6px;
-  }
-  .icon-clock{
-    display: flex;
-    width: 60px;
-    height: 60px;
-    background:url('../public/imgs/clock.svg') var(--bgBlue);
-    background-repeat: no-repeat;
-    background-size: 35px;
-    background-position: center;
-    border-radius: 6px;
-  }
-  .icon-qrcode{
-    display: flex;
-    width: 60px;
-    height: 60px;
-    background:url('../public/imgs/qricon.svg') var(--bgBlue);
-    background-repeat: no-repeat;
-    background-size: 35px;
-    background-position: center;
-    border-radius: 6px;
-  }
-  .desc{
-    max-width: 24vw;
-  }
-  .infos{
-    display: flex;
-    margin-left: 20px;
-    gap:12px;
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px); 
-    -webkit-backdrop-filter: blur(10px);
-    padding: 10px;
-    border-radius: 7px;
-    margin:20px;
-    transition: .5s all linear;
-  }
-  .infos:hover{
-    background: rgba(123, 209, 243, 0.2);
-    backdrop-filter: blur(10px); 
-    -webkit-backdrop-filter: blur(10px);
-  }
-  .infos:nth-child(1) {
-  margin-left: 0px;
+    </footer>
+  </div>
+</template>
+
+<script setup>
+
+</script>
+
+<style scoped lang="scss">
+@import url('https://fonts.googleapis.com/css2?family=Bakbak+One&display=swap');
+
+#content {
+ display: flex;
+ align-items: center;
+ justify-content: flex-start;
+ flex-direction: column;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  overflow-x: hidden;
+  width: 100%;
+  min-height: 100vh;
+  background: url('/imgs/bg-landingpage.svg');
+  background-size: cover;
 }
 
-.infos:nth-child(2) {
-  margin-left: 20px;
+#header {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: 60vw;
+  margin-top: 50px;
+  height: 12vh;
 }
 
-.infos:nth-child(3) {
-  margin-left: 40px;
+.logo {
+  width: 157px;
+  height: 102px;
+  background: url('/imgs/logo-ladingpage.svg') no-repeat;
 }
 
-.infos:nth-child(4) {
-  margin-left: 60px;
+#middle {
+  display: flex;
+  width: 60vw;
+  flex-direction: row;
+  margin-top: 40px;
+  justify-content: space-between;
 }
 
-.btn-wpp{
-  width: 20vw;
-  text-align: center;
+.title {
+  max-width: 80%;
+  line-height: 40px;
+}
+
+.title h1 {
+  font-family: "Bakbak One", sans-serif;
+  font-weight: 400;
+  color: #133D67;
+  font-style: normal;
+  font-size: 3rem;
+}
+
+.title p {
+  font-size: 2rem;
+  line-height: 30px;
+  font-family: "Montserrat";
+  color: #333;
+}
+
+.description {
+  width: 100%;
+  max-width: 600px;
+  display: flex;
+  align-items: flex-start;
+  flex-direction: column;
+  margin-top: 40px;
+  gap: 15px;
+}
+
+.description section {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.mascot {
+  position: fixed;
+  top: 60px;
+  left: 600px;
+  display: flex;
+  min-width: 60%;
+  height: 90%;
+  background: url('/imgs/icons-landingpage/mascot.svg') no-repeat center;
+  background-size: contain;
+}
+
+footer {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  align-items: flex-end;
+  transform: translateX(-50%);
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 2fr;
+  width: 60vw;
+}
+
+.footer {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 100px;
+  position: fixed;
+  left: 0;
+  z-index: 0;
+  width: 60vw;
+  background-color: #133D67;
   color: white;
-  letter-spacing:2px;
-  font-family: "Noto Sans", serif;
-  font-size: clamp(1em, 1em + 1vw, 1.1em);
-  padding: 20px;
-  z-index: 1;
+  border-radius: 8px 8px 0 0;
+  height: 120px;
+}
+
+.footer span {
+  background-color: #009c8d;
+  padding: 15px 30px;
   cursor: pointer;
-  border-radius: 7px;
-  margin-top:-60px;
+  letter-spacing: 2px;
+  font-family: "Montserrat", sans-serif;
   font-weight: bold;
-  background: var(--bgGreen);
-  transition: .4s all linear;
+  border-radius: 5px;
+  transition: all .4s ease-in-out;
 }
-.btn-wpp:hover{
-  letter-spacing:4px;
+.footer span:hover{
+  scale: 1.05;
 }
-.btn-wpp:hover{
-  background: var(--bgBlue);
+.social-icons {
+  display: flex;
+  z-index: 1;
+  gap: 15px;
+  margin-right: 50px;
 }
-.icon-face, .icon-instagram, .icon-wpp{
+
+.social-icons a img {
   width: 32px;
   height: 32px;
 }
-.footer{
-  display: flex;
-  flex-direction: row;
-  padding: 40px;
-  gap: 10px;
-  z-index: 9;
-}
-.icon-face{
-  background: url("../public/imgs/icons-landingpage/face.png") no-repeat center;
-  background-size: cover;
-}
-.icon-instagram{
-  background: url("../public/imgs/icons-landingpage/insta.png") no-repeat center;
-  background-size: cover;
-}
-.icon-wpp{
-  background: url("../public/imgs/icons-landingpage/whatsapp.png") no-repeat center;
-  background-size: cover;
-}
-@media (max-width: 1024px) {
-  .body {
-    width: 90vw;
-    height: auto;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-  }
-  
-  .img {
-    width: 80%;
-    height: auto;
-    background-position: center;
-    margin-bottom: 20px;
-  }
-  
-  .description {
-    max-width: 90%;
-    text-align: center;
-  }
 
-  .infos {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    margin-left: 0 !important;
-  }
-
-  .desc {
-    max-width: 90%;
-  }
+.smartphones {
+  width: 30vw;
+  height: 48vh;
+  z-index: 1;
+  background: url('../public/imgs/icons-landingpage/celulare.svg') center bottom;
+  background-repeat: no-repeat;
+  background-size: contain;
 }
 
 @media (max-width: 768px) {
-  #content {
-    background-size: cover;
-    height: auto;
-    padding: 20px 0;
-  }
-  
-  .body {
-    width: 95vw;
+  .mascot {
+    max-width: 250px;
+    top: 60%;
   }
 
-  .img {
-    width: 100%;
-    height: auto;
-  }
-
-  .infos {
-    width: 90%;
+  footer {
     flex-direction: column;
-    align-items: center;
-    margin: 10px auto;
+    text-align: center;
   }
 
-  .icon-sustent, .icon-hands, .icon-clock, .icon-qrcode {
-    width: 50px;
-    height: 50px;
-    background-size: 30px;
-  }
-
-  .desc h3 {
-    font-size: 1rem;
-  }
-
-  .desc span {
-    font-size: 0.9rem;
+  .social-icons {
+    justify-content: center;
   }
 }
-
-@media (max-width: 480px) {
-  .logo {
-    width: 180px;
-    height: 120px;
-  }
-
-  .infos {
-    width: 100%;
-    padding: 8px;
-  }
-
-  .icon-sustent, .icon-hands, .icon-clock, .icon-qrcode {
-    width: 40px;
-    height: 40px;
-    background-size: 25px;
-  }
-
-  .desc h3 {
-    font-size: 0.9rem;
-  }
-
-  .desc span {
-    font-size: 0.8rem;
-  }
-}
-
-  </style>
-  
+</style>

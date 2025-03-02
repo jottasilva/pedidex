@@ -191,6 +191,7 @@ const config = {
 </script>
 
 <style lang="scss">
+
 #slideBox {
     width: 61vw;
     margin-bottom: 100px;
@@ -342,7 +343,7 @@ header {
 #logo {
     display: flex;
     margin-top: -20px;
-    background: url('../public/imgs/logo.svg') no-repeat center;
+    background: url('/imgs/logo.svg') no-repeat center;
     width: 285px;
     height: 190px;
     z-index: 9;
@@ -389,7 +390,7 @@ header {
 .search {
     width: 22px;
     height: 22px;
-    background: url('../public/imgs/search.svg') no-repeat center;
+    background: url('/imgs/search.svg') no-repeat center;
     background-size: contain;
     cursor: pointer;
 }
