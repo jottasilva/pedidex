@@ -64,6 +64,7 @@
 <script setup>
 import { useModalStore } from '~/stores/modal'
 import { useToast } from 'primevue/usetoast'
+import { useRouter } from 'vue-router';
 import { Carousel, Slide, Pagination } from 'vue3-carousel';
 import { fetchEstablishments } from '~/services/getEstablishment';
 import { fetchMenu } from '~/services/getMenu'
@@ -83,7 +84,7 @@ const establishment = ref([]);
 const slide = ref([]);
 const loading = ref(false);
 const error = ref(null);
-
+const router = useRouter();
 const updateSearchQuery = () => {
   searchStore.setSearchQuery(searchStore.searchQuery);
 };
@@ -109,9 +110,8 @@ const loadProducts = async (id) => {
         slide.value = data;
 
     } catch (err) {
-        error.value = 'Erro ao buscar itens do cardápio...';
-        showToast('error', 'Ops.', error)
-        console.error(err);
+
+        return router.push('/welcome');
     }
 };
 const loadEstablishment = async (id) => {
@@ -123,13 +123,11 @@ const loadEstablishment = async (id) => {
             establishment.value = data;
             store.setEstablishment(data);
         } catch (err) {
-            error.value = 'Erro ao carregar Estabelecimento';
-            console.error(err);
         } finally {
             loading.value = false;
         }
     } else {
-        showToast('warn', 'URL INVALIDA!', 'a URL inserida esta incorreta')
+        return router.push('/welcome');
     }
 };
 
@@ -137,6 +135,7 @@ onMounted(async () => {
     await loadEstablishment(page.value);
     await loadProducts(establishment.value.id)
     cartStore.initializeCart();
+    
 });
 
 watch(establishment, (newEstablishment) => {
