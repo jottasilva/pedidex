@@ -133,11 +133,11 @@
 
 .mascot {
   position: fixed;
-  top: 60px;
+  top: 30px;
   left: 600px;
   display: flex;
   min-width: 60%;
-  height: 90%;
+  height: 95%;
   background: url('/imgs/icons-landingpage/mascot.svg') no-repeat center;
   background-size: contain;
 }
@@ -301,14 +301,14 @@ footer {
     margin-right: 0;
   }
   .smartphones {
-  width: 100vw; 
-  height: 26vh; 
-  z-index: 1;
-  background: url('../public/imgs/icons-landingpage/celulare.svg') center bottom;
-  background-repeat: no-repeat;
-  background-size: 80%;
-  position: relative;
-}
+    width: 90vw; 
+    height: 30vh;
+    background-size: contain; 
+  }
+
+  .smartphones::after {
+    height: 50%; 
+  }
 
   .footer {
     width: 90vw;
