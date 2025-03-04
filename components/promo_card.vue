@@ -56,7 +56,7 @@ export default {
     display: flex;
     flex-direction: column;
     width: 90%;
-    background: url('../public/imgs/pizza1.png') no-repeat #edeef3;
+   background-repeat: no-repeat;
     background-size: cover;
     background-position: 10px -130px;
     height: 100%;

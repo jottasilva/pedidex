@@ -182,13 +182,15 @@ const formatPrice = (value) => {
 }
 
 .menu-title {
-  font-size: 1.6rem;
+  display: flex;
+  place-items: center center;
+  font-size: 1rem;
   width: 100%;
+  height:50px;
   background:#dfdfdf;
   padding-left: 20px;
   border-radius: 3px;
   letter-spacing: 1px;
-  padding-bottom:1px;
   margin-bottom: 22px;
 }
 

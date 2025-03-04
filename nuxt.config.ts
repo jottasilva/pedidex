@@ -8,7 +8,7 @@ export default defineNuxtConfig({
     }
   },
   modules: ['@primevue/nuxt-module', 'vue3-carousel-nuxt'],
-  css: ['~/assets/css/global.scss',
+  css: [
     'normalize.css/normalize.css'
   ],
   build: {
