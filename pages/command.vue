@@ -10,8 +10,9 @@
                                 <CommandItem />
                             </div>
                         </div>
-                        <div class="py-6 " style="margin-bottom: 40px;">
-                            <Button label="Proximo" @click="activateCallback('2')" />
+                        <div class="py-6 " style="margin-bottom: 40px; display: flex; justify-content: space-between;"><Button label="Proximo" @click="activateCallback('2')" />
+                            <Button @click="cartStore.resetAllQuantities()" label="Limpar comanda"
+                             severity="secondary"  />
                         </div>
                     </StepPanel>
                 </StepItem>
@@ -103,6 +104,9 @@
 
 <script setup>
 import { ref } from "vue";
+import { useCartStore } from '../services/cartStore';
+const cartStore = useCartStore();
+
 const selectedPaym = ref();
 const paym = ref([
     { name: 'Pix', code: 'PIX' },

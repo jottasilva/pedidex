@@ -41,7 +41,7 @@ const Terms_r = defineAsyncComponent(() => import('../pages/terms_r.vue'))
 }
 .bt-close div{
     display: flex;
-    background:url('../public/imgs/icons/close-bt.svg') no-repeat center;
+    background:url('/public/imgs/icons/close-bt.svg') no-repeat center;
     width:120px;
     cursor: pointer;
     height: 40px;

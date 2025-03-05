@@ -12,6 +12,9 @@
                     <span class="btn" @click="updateQuantity(index, 1)">+</span>
                 </section>
             </article>
+            <span v-if="products.length <= 0">
+                <h1>Sua comanda esta vazia.</h1>
+            </span>
         </section>
         <section>
             <Toolbar class="footer">
@@ -44,7 +47,8 @@ const formatPrice = (value) => {
 const updateQuantity = (index, amount) => {
     if (products.value[index].quantity + amount >= 0) {
         cartStore.cartItems[index].quantity += amount;
-        cartStore.saveToLocalStorage()
+        cartStore.saveToLocalStorage();
+
     }
 };
 onMounted(()=>{

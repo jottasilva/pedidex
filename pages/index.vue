@@ -1,5 +1,8 @@
 <template>
     <div id="template">
+        <div id="overlay" v-if="establishment.length < 1">
+            <DotLottieVue style="height: 500px; width: 500px" autoplay loop src="https://lottie.host/946c12f9-f519-47f6-ba7a-e80de236c2bc/iDE8hvEJ2h.lottie" />    
+        </div>
         <header>
             <nav>
                 <div id="navbar">
@@ -15,6 +18,7 @@
                             <li @click="showToast('success', 'Sucesso!', 'Um atendente já foi solicitado, Aguarde!')">
                                 CHAMAR ATENDIMENTO</li>
                             <li @click="openModal({ page: 'command' })">COMANDA</li>
+                            
                         </ul>
                         <div class="total">
                             <span>total dos pedidos</span>
@@ -42,7 +46,9 @@
                 <Carousel v-bind="config">
                     <Slide v-for="product in filteredSlides" :key="product.id">
                         <PromoCard :title="product.name" :description="product.description" :price=parseFloat(product.price)
-                            :bg="product.image" />
+                            :bg="product.image"
+                            
+                            />
                     </Slide>
                     <template #addons>
                         <Pagination />
@@ -51,12 +57,11 @@
             </div>
         </article>
         <article id="menu-itens">
-            <menu-item :uuid="establishment.id" />
+        <menu-item :uuid="establishment.id" />
         </article>
         <footer-component />
         <modal-menu v-if="modalStore.modal" />
         <Toast position="top-left" group="bl" />
-
     </div>
 
 </template>
@@ -65,6 +70,7 @@
 import { useModalStore } from '~/stores/modal'
 import { useToast } from 'primevue/usetoast'
 import { useRouter } from 'vue-router';
+import { DotLottieVue } from '@lottiefiles/dotlottie-vue'
 import { Carousel, Slide, Pagination } from 'vue3-carousel';
 import { fetchEstablishments } from '~/services/getEstablishment';
 import { fetchMenu } from '~/services/getMenu'
@@ -73,7 +79,7 @@ import { useRoute } from 'vue-router'
 import { useEstablishmentStore } from '~/services/establishmentStore';
 import { useCartStore } from '~/services/cartStore';
 import { useSearchStore } from '~/services/searchService';
-const searchStore = useSearchStore();
+const searchStore =  useSearchStore();
 const store = useEstablishmentStore();
 const cartStore = useCartStore();
 const route = useRoute();
@@ -85,16 +91,18 @@ const slide = ref([]);
 const loading = ref(false);
 const error = ref(null);
 const router = useRouter();
+
+const verifyPage = () => {
+    return router.push('/welcome');
+}
 const updateSearchQuery = () => {
   searchStore.setSearchQuery(searchStore.searchQuery);
 };
-
 const filteredSlides = computed(() => {
     return slide.value.flatMap(section =>
         section.products.filter(item => item.promotion === true)
     );
 });
-
 const formattedTotal = computed(() => {
     return formatCurrency(total.value);
 });
@@ -108,10 +116,10 @@ const loadProducts = async (id) => {
     try {
         const data = await fetchMenu(id);
         slide.value = data;
-
     } catch (err) {
-
-        return router.push('/welcome');
+        error.value = 'Erro ao buscar itens do cardápio...';
+        showToast('error', 'Ops.', error)
+        verifyPage();
     }
 };
 const loadEstablishment = async (id) => {
@@ -123,23 +131,23 @@ const loadEstablishment = async (id) => {
             establishment.value = data;
             store.setEstablishment(data);
         } catch (err) {
+            error.value = 'Erro ao carregar Estabelecimento';
+            verifyPage();
         } finally {
             loading.value = false;
         }
     } else {
-        return router.push('/welcome');
+        showToast('warn', 'URL INVALIDA!', 'a URL inserida esta incorreta')
     }
 };
 
 onMounted(async () => {
-    await loadEstablishment(page.value);
-    await loadProducts(establishment.value.id)
+   await loadEstablishment(page.value);
+   await loadProducts(establishment.value.id)
     cartStore.initializeCart();
-    
 });
 
 watch(establishment, (newEstablishment) => {
-    console.log(searchStore.searchQuery)
     if (newEstablishment && newEstablishment.image) {
         document.documentElement.style.setProperty('--bgImage', `url(${API_URL + "imgs/" + newEstablishment.image})`);
     }
@@ -190,9 +198,21 @@ const config = {
 </script>
 
 <style lang="scss">
+#overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgb(255, 255, 255);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
 
 #slideBox {
-    width: 61vw;
+    width: 65vw;
     margin-bottom: 100px;
     padding: 10px 0;
 }
@@ -312,7 +332,7 @@ nav {
 
 header {
     display: flex;
-    height: 60vh;
+    height: 50vh;
     flex-direction: column;
     background: linear-gradient(rgba(0, 0, 0, .8), rgba(0, 0, 0, 0.5)),
         var(--bgImage) no-repeat;
@@ -335,17 +355,17 @@ header {
     align-self: center;
     align-content: center;
     flex-direction: column;
-    width: 60vw;
+    width: 65vw;
 }
 
 #logo {
     display: flex;
-    margin-top: -20px;
+    margin-top: 20px;
     background: url('/imgs/logo.svg') no-repeat center;
-    width: 285px;
-    height: 190px;
+    width: 265px;
+    height: 170px;
     z-index: 9;
-    background-size: cover;
+    background-size: contain;
 }
 
 #navbar {
@@ -363,7 +383,7 @@ header {
     align-self: center;
     gap: 20px;
     width: 100%;
-    margin-top: 100px;
+    margin-top: 60px;
     padding: 10px;
     background-color: white;
     border-radius: 5px;

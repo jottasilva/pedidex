@@ -18,9 +18,13 @@ export const useCartStore = defineStore('cart', {
       this.saveToLocalStorage();
     },
     clearCart() {
+      this.cartItems.forEach(item => {
+        item.quantity = 0;
+      });
       this.cartItems = [];
       this.saveToLocalStorage();
-      console.log("Carrinho limpo.");
+      this.resetAllQuantities();
+     
     },
     getTotal() {
       const totalFromLocalStorage = this.cartItems.reduce((total, item) => {
@@ -34,5 +38,16 @@ export const useCartStore = defineStore('cart', {
         localStorage.setItem('cartItems', JSON.stringify(this.cartItems));
       }
     },
+    resetAllQuantities() {
+      this.cartItems.forEach(item => {
+        item.quantity = 0;
+      });
+      this.saveToLocalStorage();
+      setTimeout(() => {
+          this.clearCart();
+      })
+    },
+    
   },
+  
 });

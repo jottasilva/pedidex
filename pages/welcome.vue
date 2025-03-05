@@ -180,6 +180,7 @@ footer {
   background-color: #009c8d;
   padding: 15px 30px;
   cursor: pointer;
+  z-index: 9;
   letter-spacing: 2px;
   font-family: "Montserrat", sans-serif;
   font-weight: bold;

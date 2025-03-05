@@ -7,7 +7,6 @@ export const useSearchStore = defineStore('search', () => {
   const filteredQuery = computed(() => searchQuery.value.toLowerCase());
   const setSearchQuery = (query) => {
     searchQuery.value = query;
-    console.log(searchQuery.value);
   };
 
   return { searchQuery, filteredQuery, setSearchQuery };
