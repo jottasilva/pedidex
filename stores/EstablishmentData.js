@@ -13,14 +13,13 @@ import { fetchEstablishments } from "~/services/getEstablishment";
             try{
                 const data = await fetchEstablishments();
                 this.establishments = data;
+                localStorage.setItem('establishmentData');
             }catch(error){
                 this.error = 'Erro ao carregar o estabelecimento';
             }finally{
                 this.error = null;
                 this.loading = false;
             }
-
-
         }
     }
 });

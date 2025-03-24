@@ -1,7 +1,8 @@
 <template>
     <div id="template">
         <div id="overlay" v-if="establishment.length < 1">
-            <DotLottieVue style="height: 500px; width: 500px" autoplay loop src="https://lottie.host/946c12f9-f519-47f6-ba7a-e80de236c2bc/iDE8hvEJ2h.lottie" />    
+            <DotLottieVue style="height: 500px; width: 500px" autoplay loop
+                src="https://lottie.host/946c12f9-f519-47f6-ba7a-e80de236c2bc/iDE8hvEJ2h.lottie" />
         </div>
         <header>
             <nav>
@@ -15,10 +16,10 @@
                     <NuxtPage />
                     <section class="menu">
                         <ul>
-                            <li @click="showToast('success', 'Sucesso!', 'Um atendente já foi solicitado, Aguarde!')">
+                            <li @click="orderCall">
                                 CHAMAR ATENDIMENTO</li>
                             <li @click="openModal({ page: 'command' })">COMANDA</li>
-                            
+
                         </ul>
                         <div class="total">
                             <span>total dos pedidos</span>
@@ -32,7 +33,8 @@
                 <div id="search">
                     <section class="search"></section>
                     <form action="">
-                        <input  @input="updateSearchQuery" v-model="searchStore.searchQuery" type="text" placeholder="faça uma pesquisa">
+                        <input @input="updateSearchQuery" v-model="searchStore.searchQuery" type="text"
+                            placeholder="faça uma pesquisa">
                     </form>
                 </div>
             </div>
@@ -45,10 +47,8 @@
             <div id="slideBox">
                 <Carousel v-bind="config">
                     <Slide v-for="product in filteredSlides" :key="product.id">
-                        <PromoCard :title="product.name" :description="product.description" :price=parseFloat(product.price)
-                            :bg="product.image"
-                            
-                            />
+                        <PromoCard :title="product.name" :description="product.description"
+                            :price=parseFloat(product.price) :bg="product.image" :product="product" />
                     </Slide>
                     <template #addons>
                         <Pagination />
@@ -57,8 +57,9 @@
             </div>
         </article>
         <article id="menu-itens">
-        <menu-item :uuid="establishment.id" />
+            <menu-item :uuid="establishment.id" />
         </article>
+
         <footer-component />
         <modal-menu v-if="modalStore.modal" />
         <Toast position="top-left" group="bl" />
@@ -79,7 +80,8 @@ import { useRoute } from 'vue-router'
 import { useEstablishmentStore } from '~/services/establishmentStore';
 import { useCartStore } from '~/services/cartStore';
 import { useSearchStore } from '~/services/searchService';
-const searchStore =  useSearchStore();
+import webSocketService from '~/services/websocket_client';
+const searchStore = useSearchStore();
 const store = useEstablishmentStore();
 const cartStore = useCartStore();
 const route = useRoute();
@@ -89,14 +91,16 @@ const total = computed(() => cartStore.getTotal());
 const establishment = ref([]);
 const slide = ref([]);
 const loading = ref(false);
+const messages = [];
 const error = ref(null);
 const router = useRouter();
+
 
 const verifyPage = () => {
     return router.push('/welcome');
 }
 const updateSearchQuery = () => {
-  searchStore.setSearchQuery(searchStore.searchQuery);
+    searchStore.setSearchQuery(searchStore.searchQuery);
 };
 const filteredSlides = computed(() => {
     return slide.value.flatMap(section =>
@@ -122,8 +126,9 @@ const loadProducts = async (id) => {
         verifyPage();
     }
 };
+
 const loadEstablishment = async (id) => {
-    if (page != null && page.value != '') {
+    if (page?.value) {
         loading.value = true;
         error.value = null;
         try {
@@ -142,8 +147,11 @@ const loadEstablishment = async (id) => {
 };
 
 onMounted(async () => {
-   await loadEstablishment(page.value);
-   await loadProducts(establishment.value.id)
+    await loadEstablishment(page.value);
+    if (establishment.value?.id) {
+        await loadProducts(establishment.value.id);
+        webSocketService.connect();
+    }
     cartStore.initializeCart();
 });
 
@@ -161,14 +169,24 @@ const showToast = (severity, summary, detail) => {
         life: 4000,
         group: 'bl'
     })
-    //severity: Define a severidade do toast (por exemplo, "success", "info", "warn", "error").
-    //summary: Define um título curto para a notificação.
-    //detail: Define uma mensagem mais detalhada da notificação.
 }
+const orderCall = () => {
+    const data = {
+            establishment_id:establishment.value.id,
+            message:"Chamando atendimento...",
+            table_number:2,
+            group_name: "grupo_123"
+    };
+
+    try {
+        webSocketService.sendMessage(data);
+        showToast('success', 'Atendimento Solicitado!', 'Aguarde, em instantes você será atendido(a)!');
+    } catch (err) {
+        showToast('error', 'Erro', 'Erro ao tentar chamar atendimento... ' + err);
+    }
+};
 const modalStore = useModalStore();
 const { openModal } = modalStore;
-
-
 const config = {
     height: 400,
     itemsToShow: 1,
@@ -199,16 +217,16 @@ const config = {
 
 <style lang="scss">
 #overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgb(255, 255, 255);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgb(255, 255, 255);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
 }
 
 #slideBox {
@@ -245,8 +263,8 @@ const config = {
 }
 
 .p-toast {
-    top: 88vh !important;
-    right: 40px !important;
+    top: 85% !important;
+    right: 10px !important;
     padding: 2px;
 }
 
@@ -274,15 +292,21 @@ const config = {
 
 .p-toast-message-success {
     width: 20vw;
-    background-color: #4caf50 !important;
-    border-left: 5px solid #2e7d32 !important;
+    background-color: #2e7d32 !important;
+    border-left: 5px solid #4caf50 !important;
     color: #fff !important;
-    font-weight: bold;
-
 }
 
 .p-toast-detail {
-    color: #000 !important;
+    color: white !important;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+.p-toast-summary {
+    color: #ffffff !important;
+    font-weight: bold !important;
+    letter-spacing: 1px;
 }
 
 .p-toast-message-error {

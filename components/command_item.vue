@@ -19,7 +19,7 @@
         <section>
             <Toolbar class="footer">
                 <template #center>
-                    <h3>Nº PEDIDO #0010</h3>
+                    <h3>{{"Nº DO PEDIDO " +  cartStore.getOrderNumber() }}</h3>
                 </template>
 
                 <template #start>
@@ -37,26 +37,40 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { useCartStore } from "~/services/cartStore";
+
 const cartStore = useCartStore();
+
 const formatPrice = (value) => {
   const num = Number(value);
-  return isNaN(num) ? '0,00' : num.toFixed(2).replace('.', ',');
+  return isNaN(num) ? "0,00" : num.toFixed(2).replace(".", ",");
 };
-const updateQuantity = (index, amount) => {
-    if (products.value[index].quantity + amount >= 0) {
-        cartStore.cartItems[index].quantity += amount;
-        cartStore.saveToLocalStorage();
 
-    }
+const updateQuantity = (index, amount) => {
+  let item = cartStore.cartItems[index];
+
+  if (!item) return;
+
+  const newQuantity = item.quantity + amount;
+
+  if (newQuantity <= 0) {
+    cartStore.cartItems = cartStore.cartItems.filter((_, i) => i !== index);
+  } else {
+    cartStore.cartItems[index].quantity = newQuantity;
+  }
+
+  cartStore.saveToLocalStorage();
 };
-onMounted(()=>{
-    cartStore.initializeCart();
+
+onMounted(() => {
+  cartStore.initializeCart();
 });
-const products = computed(()=> cartStore.cartItems);
-const getTotalCart = computed(()=> cartStore.getTotal);
+
+const products = computed(() => cartStore.cartItems);
+const getTotalCart = computed(() => cartStore.getTotal);
 </script>
+
 
 <style lang="scss" scoped>
 .grid {

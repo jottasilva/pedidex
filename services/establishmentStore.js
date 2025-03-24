@@ -23,9 +23,16 @@ export const useEstablishmentStore = defineStore('establishment', {
     },
     setEstablishment(newEstablishment) {
       this.establishment = newEstablishment; 
+      localStorage.setItem('establishmentLocal', JSON.stringify(newEstablishment));
     },
     getEstablishment() {
-      return this.establishment; 
+      if (!this.establishment) {
+        const storedData = localStorage.getItem('establishmentLocal');
+        if (storedData) {
+          this.establishment = JSON.parse(storedData);
+        }
+      }
+      return this.establishment;
     },
     clearStore() {
       this.establishment = null; 

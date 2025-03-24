@@ -45,8 +45,7 @@ const props = defineProps({
     default: null,
   }
 });
-const menu = reactive([]);
-const localStorageKey = 'cartItems';
+const menu = ref([]);
 const sections = ref([]);
 const error = ref('');
 const isLoading = ref(true);
@@ -89,37 +88,22 @@ const loadProducts = async (id) => {
 const filteredProducts = computed(() => {
   if (!searchStore.searchQuery) return menu.value; 
   
-  return menu.values.map(category => ({
+  return menu.value.map(category => ({
     ...category,
     products: category.products.filter(product =>
       product.description.toLowerCase().includes(searchStore.searchQuery.toLowerCase())
     )
   })).filter(category => category.products.length > 0); 
 });
-// RESET TO QUANTITY 
-const resetQuantities = () => {
-  menu.value = menu.value.map(category => ({
-    ...category,
-    products: category.products.map(product => ({
-      ...product,
-      quantity: 0
-    }))
-  }));
 
-  saveCart(); 
-};
 // SAVE TO STORE FUNCTION
 const saveCart = () => {
   const selectedItems = menu.value.flatMap(category => 
     category.products.filter(product => product.quantity > 0)
   );
-  
-  // Armazena os itens do carrinho no localStorage
   if (typeof window !== 'undefined') { 
     localStorage.setItem('cartItems', JSON.stringify(selectedItems));
   }
-
-  // Atualiza o store do cart com os itens selecionados
   cartStore.addToCart(selectedItems); 
 };
 // INCREMENT AND DECREMENT FUNCTION
@@ -137,7 +121,7 @@ const updateQuantity = (productId, action) => {
     console.error(`Erro: Produto ${productId} não encontrado na categoria`, { category });
     return;
   }
-  // Alterar a quantidade do produto
+
   if (action === 'increment') {
     product.quantity++;
   } else if (action === 'decrement' && product.quantity > 0) {
@@ -150,7 +134,6 @@ const updateQuantity = (productId, action) => {
 
 onMounted(() => {
   if (props.uuid) {
-    resetQuantities();
     loadProducts(props.uuid);
     loadSection();
   }
@@ -162,7 +145,14 @@ watch(() => props.uuid, (newUuid) => {
     loadSection();
   }
 });
-
+watch(() => cartStore.cartItems, (newCartItems) => {
+  menu.value.forEach(category => {
+    category.products.forEach(product => {
+      const cartItem = newCartItems.find(item => item.id === product.id);
+      product.quantity = cartItem ? cartItem.quantity : 0;
+    });
+  });
+}, { deep: true });
 const formatPrice = (value) => {
   const num = Number(value);
   return isNaN(num) ? '0,00' : num.toFixed(2).replace('.', ',');
