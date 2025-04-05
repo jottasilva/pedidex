@@ -1,21 +1,40 @@
 <template>
     <div>
         <img src="/assets/painel/imgs/notify-icon.svg" width="22">
-        <span> MESA 02 está solicitando atendimento</span>
+        <span> <b>{{"MESA "+table_number }}</b> Está chamando atendimento...</span>
         <section class="info">
-            <span>20:18:23</span>
-            <img src="/assets/painel/imgs/close-icon.svg" width="22">
+            <span>{{ timestamp }}</span>
+            <img @click="removeItem(id)" src="/assets/painel/imgs/close-icon.svg" width="22">
         </section>
     </div>
 </template>
-<script>
+<script setup>
+import { useWebSocketStore } from '~/services/useWebSocketStore';
+const store = useWebSocketStore();
+const props = defineProps({
+  table_number: {
+    type: Number,
+    required: true
+  },
+  timestamp: {
+    type:String,
+    required: true
+  },
+  id:{
+    type:String,
+    required: true
+  }
+});
+const removeItem = (msg) =>  {
+    store.removeMessage(msg)
+}
 </script>
 <style scoped>
 div {
-    display: grid;
+    display: flex;
     background-color: #ee721b;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
     flex-direction: row;
-    grid-template-columns: 1fr 80% 3fr;
     padding-left: 20px;
     padding-right: 20px;
     justify-content: space-between;

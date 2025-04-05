@@ -34,6 +34,7 @@ export const useClientStore = defineStore('client', {
           this.order_number = data.order_number;
           this.paymentMethod = data.paymentMethod;
           this.change = data.change;
+          this.table = data.table_number;
           localStorage.setItem("orderDataClient", JSON.stringify(data));
       }
 
@@ -50,6 +51,7 @@ export const useClientStore = defineStore('client', {
         observation: state.observation,
         deliveryNotes : state.deliveryNotes,
         paymentMethod : state.paymentMethod,
+        table : state.table,
         change : state.change,
       };
     },

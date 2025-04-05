@@ -1,12 +1,13 @@
+// ~/stores/modal.js
 import { defineStore } from 'pinia';
 
 export const useModalStore = defineStore('modal', {
   state: () => ({
-    modal: false, 
-    modalData:null,
+    modal: false,
+    modalData: null,
   }),
   actions: {
-    openModal(data = null) {
+    openModal(data) {
       this.modal = true;
       this.modalData = data;
     },
@@ -14,9 +15,5 @@ export const useModalStore = defineStore('modal', {
       this.modal = false;
       this.modalData = null;
     },
-    toggleModal() {
-      this.modal = !this.modal;
-      this.modalData = null;
-    }
-  }
+  },
 });

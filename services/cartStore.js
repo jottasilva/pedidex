@@ -1,6 +1,5 @@
 import { defineStore } from "pinia";
 import { order } from "../services/sendCommand";
-
 export const useCartStore = defineStore("cart", {
   state: () => ({
     cartItems: [],
@@ -53,8 +52,11 @@ export const useCartStore = defineStore("cart", {
         return;
       }
       try {
-        await order(cartItems);
-        this.orderStatus = "true";
+        if (await order(cartItems)) {
+          this.orderStatus = "true";
+          this.resetAllQuantities();
+          this.generateOrderNumber();
+        }
       } catch (error) {
         console.error("Erro ao enviar pedido:", error);
         this.orderStatus = "false";

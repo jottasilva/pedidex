@@ -11,7 +11,6 @@ export const useEstablishmentStore = defineStore('establishment', {
       this.isLoading = true;
       this.error = null;
       try {
-  
         const data = await fetchEstablishments(id); 
         this.setEstablishment(data); 
       } catch (err) {

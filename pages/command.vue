@@ -17,6 +17,7 @@
                         </div>
                     </StepPanel>
                 </StepItem>
+                
                 <StepItem value="2">
                     <Step>Observações, Critícas ou Elogios</Step>
                     <StepPanel v-slot="{ activateCallback }">
@@ -86,8 +87,8 @@
                                                             optionLabel="name" placeholder="Forma de Pagamento"
                                                             class="w-full md:w-56" />
                                                     </div>
-                                                    <input v-if="selectedPayment?.code == 'DINHEIRO'" v-model="money" type="number"
-                                                        placeholder="Precisa de troco ?">
+                                                    <input v-if="selectedPayment?.code == 'DINHEIRO'" v-model="money"
+                                                        type="number" placeholder="Precisa de troco ?">
                                                 </section>
 
                                             </form>
@@ -109,9 +110,20 @@
                         </div>
                     </StepPanel>
                 </StepItem>
+                <StepItem value="4">
+                    <Step>Histórico de Pedidos</Step>
+                    <StepPanel>
+                        <div class="flex flex-col h-48 bt">
+                            <div
+                                class="border-2 border-dashed border-surface-200 dark:border-surface-700 rounded bg-surface-50 dark:bg-surface-950 flex-auto flex justify-center items-center font-medium">
+                               <OrderHistory/>
+                            </div>
+                        </div>
+                        
+                    </StepPanel>
+                </StepItem>
             </Stepper>
         </div>
-
     </ScrollPanel>
 
 </template>
@@ -121,14 +133,15 @@ import { useToast } from 'primevue/usetoast'
 import { ref } from "vue";
 import { useCartStore } from '../services/cartStore';
 import { useClientStore } from '~/stores/orderData';
-import  webSocketService  from '~/services/websocket_client';
+import webSocketService from '~/services/websocket_client';
 import { useEstablishmentStore } from '~/services/establishmentStore';
+const loginGoogle = JSON.parse(localStorage.getItem("GoogleAuthStore"));
 const localData = JSON.parse(localStorage.getItem('orderDataClient')) || {};
 const cartStore = useCartStore();
 const clientStore = useClientStore();
 const toast = useToast();
-const name = ref(localData.name || "");
-const email = ref(localData.email || "");
+const name = ref(loginGoogle.name || "");
+const email = ref(loginGoogle.email || "");
 const phone = ref(localData.phone || "");
 const cpf = ref(localData.cpf || "");
 const addressName = ref(localData.street || "");
@@ -156,10 +169,10 @@ const showToast = (severity, summary, detail) => {
 }
 const orderCall = () => {
     const data = {
-            establishment_id:store.getEstablishment().id,
-            message:"Pedido Realizado",
-            table_number:2,
-            group_name: "order"
+        establishment_id: store.getEstablishment().id,
+        message: "Pedido Realizado",
+        table_number: store.getEstablishment().table_number || 0,
+        group_name: "order"
     };
 
     try {
@@ -170,7 +183,7 @@ const orderCall = () => {
     }
 };
 const sendOrderData = async () => {
-    
+
     if (cartStore.cartItems.length > 0) {
         if (name.value?.trim() && email.value?.trim() && phone.value?.trim()) {
             try {
@@ -187,7 +200,9 @@ const sendOrderData = async () => {
                     observation: observation.value,
                     deliveryNotes: deliveryNotes.value,
                     paymentMethod: selectedPayment.value.code === "DINHEIRO" ? `Dinheiro (troco para ${money.value} R$)` : selectedPayment.value.name,
+                    table_number: store.getEstablishment().table_number || 0,
                     change: addressTip.value,
+                    orderId :  cartStore.getOrderNumber(),
                 };
 
                 clientStore.setClientData(clientData);

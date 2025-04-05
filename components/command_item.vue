@@ -62,11 +62,9 @@ const updateQuantity = (index, amount) => {
 
   cartStore.saveToLocalStorage();
 };
-
 onMounted(() => {
   cartStore.initializeCart();
 });
-
 const products = computed(() => cartStore.cartItems);
 const getTotalCart = computed(() => cartStore.getTotal);
 </script>

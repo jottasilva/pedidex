@@ -16,9 +16,11 @@
                     <NuxtPage />
                     <section class="menu">
                         <ul>
+                            
                             <li @click="orderCall">
                                 CHAMAR ATENDIMENTO</li>
-                            <li @click="openModal({ page: 'command' })">COMANDA</li>
+                                <li @click="abrirModal">COMANDA</li>
+
 
                         </ul>
                         <div class="total">
@@ -39,7 +41,6 @@
                 </div>
             </div>
         </header>
-
         <article v-if="filteredSlides.length > 0" id="middle">
             <section class="promo-slide">
                 <h1>NOSSAS PROMOÇÕES</h1>
@@ -63,6 +64,14 @@
         <footer-component />
         <modal-menu v-if="modalStore.modal" />
         <Toast position="top-left" group="bl" />
+        <Dialog :visible=loginModal.loginModal modal header="Faça login Para continuar" :closable="false" >
+           <div style="display: flex; justify-content: center; align-items: center; flex-direction: column; gap: 20px;padding: 10px;">
+            <LoginBtn/>
+            <div>
+                <Button type="button" label="Cancelar" severity="secondary" @click="loginModal.closeLoginModal"></Button>
+            </div>
+           </div>
+        </Dialog>
     </div>
 
 </template>
@@ -81,21 +90,26 @@ import { useEstablishmentStore } from '~/services/establishmentStore';
 import { useCartStore } from '~/services/cartStore';
 import { useSearchStore } from '~/services/searchService';
 import webSocketService from '~/services/websocket_client';
+import { useGoogleLoginStore } from "~/stores/googleLoginStore";
+import { useModalLogin } from '~/stores/loginModal';
+import { useClientStore } from '~/stores/orderData';
 const searchStore = useSearchStore();
 const store = useEstablishmentStore();
 const cartStore = useCartStore();
 const route = useRoute();
 const page = computed(() => route.query.p);
+const table_number = computed(() => route.query.t);
 const toast = useToast();
 const total = computed(() => cartStore.getTotal());
 const establishment = ref([]);
+const googleLoginStore = useGoogleLoginStore();
 const slide = ref([]);
 const loading = ref(false);
 const messages = [];
 const error = ref(null);
 const router = useRouter();
-
-
+const loginModal = useModalLogin();
+const modalStore = useModalStore();
 const verifyPage = () => {
     return router.push('/welcome');
 }
@@ -107,6 +121,12 @@ const filteredSlides = computed(() => {
         section.products.filter(item => item.promotion === true)
     );
 });
+
+function abrirModal() {
+        googleLoginStore.isLogged()?
+        modalStore.openModal({ page:'command'}):
+        loginModal.openLoginModal();
+}
 const formattedTotal = computed(() => {
     return formatCurrency(total.value);
 });
@@ -128,35 +148,44 @@ const loadProducts = async (id) => {
 };
 
 const loadEstablishment = async (id) => {
+    if (!id) {
+        showToast('warn', 'ID inválido!', 'O ID do estabelecimento não foi fornecido');
+        return;
+    }
+
     if (page?.value) {
         loading.value = true;
         error.value = null;
         try {
             const data = await fetchEstablishments(id);
+            data.table_number = table_number?.value || 0;
             establishment.value = data;
             store.setEstablishment(data);
         } catch (err) {
+            console.error('Erro ao carregar Estabelecimento:', err);
             error.value = 'Erro ao carregar Estabelecimento';
             verifyPage();
         } finally {
             loading.value = false;
         }
     } else {
-        showToast('warn', 'URL INVALIDA!', 'a URL inserida esta incorreta')
+        showToast('warn', 'URL INVÁLIDA!', 'A URL inserida está incorreta');
     }
 };
 
-onMounted(async () => {
-    await loadEstablishment(page.value);
-    if (establishment.value?.id) {
-        await loadProducts(establishment.value.id);
-        webSocketService.connect();
-    }
+
+onMounted(() => {
+    loadEstablishment(page.value).then(() => {
+        if (establishment.value?.id) {
+            loadProducts(establishment.value.id);
+            webSocketService.connect();
+        }
+    });
     cartStore.initializeCart();
 });
 
 watch(establishment, (newEstablishment) => {
-    if (newEstablishment && newEstablishment.image) {
+    if (newEstablishment?.image) {
         document.documentElement.style.setProperty('--bgImage', `url(${API_URL + "imgs/" + newEstablishment.image})`);
     }
 }, { deep: true, immediate: true });
@@ -171,11 +200,12 @@ const showToast = (severity, summary, detail) => {
     })
 }
 const orderCall = () => {
+
     const data = {
             establishment_id:establishment.value.id,
-            message:"Chamando atendimento...",
-            table_number:2,
-            group_name: "grupo_123"
+            message:"chamando atendimento...",
+            table_number:store.getEstablishment().table_number || 0,
+            group_name: "notify"
     };
 
     try {
@@ -185,8 +215,6 @@ const orderCall = () => {
         showToast('error', 'Erro', 'Erro ao tentar chamar atendimento... ' + err);
     }
 };
-const modalStore = useModalStore();
-const { openModal } = modalStore;
 const config = {
     height: 400,
     itemsToShow: 1,
@@ -332,6 +360,109 @@ const config = {
     font-size: 16px !important;
 }
 
+.gsi-material-button {
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  -webkit-appearance: none;
+  background-color: WHITE;
+  background-image: none;
+  border: 1px solid #ccc;
+  -webkit-border-radius: 4px;
+  border-radius: 4px;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  cursor: pointer;
+  font-family: 'Roboto', arial, sans-serif;
+  font-size: 14px;
+  height: 40px;
+  letter-spacing: 0.25px;
+  outline: none;
+  overflow: hidden;
+  padding: 0 12px;
+  position: relative;
+  text-align: center;
+  -webkit-transition: background-color .218s, border-color .218s, box-shadow .218s;
+  transition: background-color .218s, border-color .218s, box-shadow .218s;
+  vertical-align: middle;
+  white-space: nowrap;
+  width: auto;
+  max-width: 400px;
+  min-width: min-content;
+}
+
+.gsi-material-button .gsi-material-button-icon {
+  height: 20px;
+  margin-right: 12px;
+  min-width: 20px;
+  width: 20px;
+}
+
+.gsi-material-button .gsi-material-button-content-wrapper {
+  -webkit-align-items: center;
+  align-items: center;
+  display: flex;
+  -webkit-flex-direction: row;
+  flex-direction: row;
+  -webkit-flex-wrap: nowrap;
+  flex-wrap: nowrap;
+  height: 100%;
+  justify-content: space-between;
+  position: relative;
+  width: 100%;
+}
+
+.gsi-material-button .gsi-material-button-contents {
+  -webkit-flex-grow: 1;
+  flex-grow: 1;
+  font-family: 'Roboto', arial, sans-serif;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: top;
+}
+
+.gsi-material-button .gsi-material-button-state {
+  -webkit-transition: opacity .218s;
+  transition: opacity .218s;
+  bottom: 0;
+  left: 0;
+  opacity: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+.gsi-material-button:disabled {
+  cursor: default;
+  background-color: #ffffff61;
+
+}
+
+.gsi-material-button:disabled .gsi-material-button-contents {
+  opacity: 38%;
+}
+
+.gsi-material-button:disabled .gsi-material-button-icon {
+  opacity: 38%;
+}
+
+.gsi-material-button:not(:disabled):active .gsi-material-button-state, 
+.gsi-material-button:not(:disabled):focus .gsi-material-button-state {
+  background-color: #303030;
+  opacity: 12%;
+}
+
+.gsi-material-button:not(:disabled):hover {
+  -webkit-box-shadow: 0 1px 2px 0 rgba(60, 64, 67, .30), 0 1px 3px 1px rgba(60, 64, 67, .15);
+  box-shadow: 0 1px 2px 0 rgba(60, 64, 67, .30), 0 1px 3px 1px rgba(60, 64, 67, .15);
+}
+
+.gsi-material-button:not(:disabled):hover .gsi-material-button-state {
+  background-color: #303030;
+  opacity: 8%;
+}
+
 body {
     background: white
 }
@@ -406,7 +537,7 @@ header {
     align-items: center;
     align-self: center;
     gap: 20px;
-    width: 100%;
+    width: 95%;
     margin-top: 60px;
     padding: 10px;
     background-color: white;

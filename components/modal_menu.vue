@@ -9,6 +9,7 @@
             <Terms v-if="modalStore.modalData?.page === 'terms'"/>
             <Terms_r v-if="modalStore.modalData?.page === 'terms_r'"/>
             <Command v-if="modalStore.modalData?.page === 'command'"/>
+            <ModalLogin v-if="modalStore.modalData?.page === 'login'" />
         </div>
     </div>
 </template>
